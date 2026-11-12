@@ -1,0 +1,4 @@
+run_at=2026-11-11T13:20:02
+python=3.12.8 pandas=3.1.1 numpy=2.5.4 platform=Windows-11-10.0.26200-SP0
+raw_files_hashed=41 raw_files_unchanged_after_run=True
+inventory_rows=42 quality_rows=34 manifest_rows=45 anomalies=34 outlier_rows=328

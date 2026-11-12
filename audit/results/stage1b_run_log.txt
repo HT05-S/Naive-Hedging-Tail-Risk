@@ -1,0 +1,8 @@
+python=3.12.8 pandas=3.1.1 numpy=2.5.4
+raw_files_hashed=41 raw_files_unchanged_after_run=True
+WTI: target_weeks=1923 defined_returns=1885
+GBPUSD: target_weeks=1923 defined_returns=1922
+SP500: target_weeks=1923 defined_returns=1922
+GOLD: target_weeks=1923 defined_returns=1920
+BTC: target_weeks=464 defined_returns=463
+NATGAS: target_weeks=1453 defined_returns=1449

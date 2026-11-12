@@ -1,0 +1,7 @@
+# Audit environment (Stage 1 and Stage 1B). Create with:
+#   py -3.12 -m venv audit/.venv
+#   audit/.venv/Scripts/python.exe -m pip install -r audit/requirements.txt
+pandas==3.1.1
+numpy==2.5.4
+# Stage 1B only: reads the EIA .xls verification downloads
+xlrd==2.0.1

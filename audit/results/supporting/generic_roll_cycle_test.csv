@@ -1,0 +1,15 @@
+root,generic_pair,month_group,months,LTD_events_tested,share_jump_next_day_8x,share_jump_within_3d_5x,median_daily_abs_spread_change,interpretation
+CL,CL1/CL2,cycle months,FGHJKMNQUVXZ,442,0.339,0.493,0.0011435874433554111,all listed months are in the cycle; test only shows roll signal strength
+CL,CL1/CL2,off-cycle months,,0,,,0.0011435874433554111,all listed months are in the cycle; test only shows roll signal strength
+BP,BP1/BP2,cycle months,HMUZ,147,0.946,0.973,2.1587099744686464e-05,generics follow the assumed cycle (strong separation on primary spec)
+BP,BP1/BP2,off-cycle months,FGJKNQVX,77,0.026,0.247,2.1587099744686464e-05,generics follow the assumed cycle (strong separation on primary spec)
+SP,SP1/SP2,cycle months,HMUZ,127,0.559,0.701,5.2698177157561735e-05,all listed months are in the cycle; test only shows roll signal strength
+SP,SP1/SP2,off-cycle months,FGJKNQVX,0,,,5.2698177157561735e-05,all listed months are in the cycle; test only shows roll signal strength
+ES,ES1/ES2,cycle months,HMUZ,117,0.923,0.94,6.675893455237308e-05,all listed months are in the cycle; test only shows roll signal strength
+ES,ES1/ES2,off-cycle months,FGJKNQVX,0,,,6.675893455237308e-05,all listed months are in the cycle; test only shows roll signal strength
+GC,GC1/GC2,cycle months,GJMQVZ,221,0.878,0.937,7.959935994314177e-05,generics follow the assumed cycle (strong separation on primary spec)
+GC,GC1/GC2,off-cycle months,FHKNUX,221,0.186,0.552,7.959935994314177e-05,generics follow the assumed cycle (strong separation on primary spec)
+BTC,BTC1/BTC2,cycle months,FGHJKMNQUVXZ,106,0.708,0.83,0.0005714287333153711,all listed months are in the cycle; test only shows roll signal strength
+BTC,BTC1/BTC2,off-cycle months,,0,,,0.0005714287333153711,all listed months are in the cycle; test only shows roll signal strength
+NG,NG1/NG2,cycle months,FGHJKMNQUVXZ,438,0.457,0.607,0.0028292972644308545,all listed months are in the cycle; test only shows roll signal strength
+NG,NG1/NG2,off-cycle months,,0,,,0.0028292972644308545,all listed months are in the cycle; test only shows roll signal strength

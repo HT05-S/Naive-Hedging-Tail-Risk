@@ -1,0 +1,8 @@
+root,file,contracts,unparseable_tickers,duplicate_tickers,max_contracts_sharing_one_LTD,single_digit_year_tickers,first_LTD,last_LTD,months_listed,generic_cycle_assumed,off_cycle_contracts,off_cycle_years,cycle_years_with_fewer_than_expected,median_FND_minus_LTD_days,notes
+CL,data/raw/bloomberg/CL_contracts.csv,645,0,0,1,26,1983-05-18,2037-01-20,F:54 G:54 H:53 J:53 K:53 M:54 N:54 Q:54 U:54 V:54 X:54 Z:54,FGHJKMNQUVXZ,0,,,2.0,
+BP,data/raw/bloomberg/BP_contracts.csv,272,0,0,1,47,1987-03-13,2031-09-15,F:11 G:11 H:45 J:12 K:12 M:45 N:12 Q:12 U:45 V:12 X:11 Z:44,HMUZ,93,2017-2028,,0.0,
+SP,data/raw/bloomberg/SP_contracts.csv,170,0,0,12,7,1982-06-17,2021-09-17,H:41 M:42 U:42 Z:45,HMUZ,0,,,0.0,"12 contracts share LTD 2021-09-17: SPZ4,SPZ3,SPU3,SPM3,SPH3,SPH22,SPU22,SPM22,SPZ5,SPZ21,SPZ22,SPZ6"
+ES,data/raw/bloomberg/ES_contracts.csv,138,0,0,1,25,1997-09-18,2031-12-19,H:34 M:34 U:35 Z:35,HMUZ,0,,,0.0,
+GC,data/raw/bloomberg/GC_contracts.csv,655,0,0,1,44,1975-01-29,2032-06-28,F:54 G:54 H:54 J:54 K:54 M:58 N:54 Q:54 U:54 V:54 X:54 Z:57,GJMQVZ,324,1975-2028,,-28.0,
+BTC,data/raw/bloomberg/BTC_contracts.csv,116,0,0,1,21,2018-01-26,2028-03-31,F:10 G:10 H:11 J:10 K:9 M:10 N:9 Q:9 U:10 V:9 X:9 Z:10,FGHJKMNQUVXZ,0,,,0.0,
+NG,data/raw/bloomberg/NG_contracts.csv,583,0,0,1,0,1990-05-21,2038-11-26,F:48 G:48 H:48 J:48 K:48 M:49 N:49 Q:49 U:49 V:49 X:49 Z:49,FGHJKMNQUVXZ,0,,,1.0,

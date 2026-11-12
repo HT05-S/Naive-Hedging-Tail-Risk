@@ -1,0 +1,228 @@
+record_type,market,item,local_rows,local_valid,local_blank,live_fred_rows,live_fred_valid,live_fred_blank,eia_rows,eia_valid,local_vs_live_identical_values,local_vs_live_compared,local_vs_eia_identical_values,local_vs_eia_compared,local_blank_but_live_valid,local_blank_but_eia_valid,eia_dates_absent_from_local,local_first,local_last,live_last,eia_last,sha256_live,sha256_eia,note,fred_rows,fred_blank_rows,blank_rows_cl1_traded,blank_rows_cl1_not_traded,wednesdays,missing_wednesdays,missing_wednesdays_cl1_traded,missing_wednesdays_cl1_not_traded,count,period,target_weeks,possible_returns,retained_returns,excluded_returns,weeks_without_observation,displaced_observation_dates,returns_with_displaced_end,returns_with_displaced_start,holding_5d,holding_6d,holding_7d,holding_8d,holding_9d,spot_std,fut_std,spot_min,spot_max,corr_spot_fut,strict_subset_check,cl1_on_wednesday,fred_tue,fred_mon,primary_obs_date,primary_outcome,likely_cause
+external_verification,WTI,fred/DCOILWTICO.csv,10654,9537,1117,10654,9537,1117,9537,9537,9537,9537,9537,9537,0,0,0,1986-01-02,2026-11-03,2026-11-03,2026-11-03,90c95c17a2cdb9a3b4a8d393494d19a40e1eb7fa80943838036754d3be74a06e,d14bf481bee0d9a8f1b475d9103821f33289e2c55234711712e1231ee75e1b36,downloaded 2026-11-11 from fred.stlouisfed.org (fredgraph.csv) and eia.gov (hist_xls); stored outside data/raw,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+external_verification,NATGAS,fred/DHHNGSP.csv,7781,5722,2059,7781,5722,2059,5723,5722,5722,5722,5722,5722,0,0,0,1997-01-07,2026-11-03,2026-11-03,2026-11-03,49b12d4ac0c5e14da46d15c98e8c371385a775e916513886609020417b236185,de1a4694257b3a8acc161087c268111d908b974b8963c122323fa6ba002c750b,downloaded 2026-11-11 from fred.stlouisfed.org (fredgraph.csv) and eia.gov (hist_xls); stored outside data/raw,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,1990,,,,,,,,,,,,,,,,,,,,,,,261,6,2,4,52,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,1991,,,,,,,,,,,,,,,,,,,,,,,261,9,4,5,52,1,0,1,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,1992,,,,,,,,,,,,,,,,,,,,,,,262,13,8,5,53,2,1,1,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,1993,,,,,,,,,,,,,,,,,,,,,,,261,22,13,9,52,4,4,0,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,1994,,,,,,,,,,,,,,,,,,,,,,,260,49,40,9,52,10,9,1,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,1995,,,,,,,,,,,,,,,,,,,,,,,260,37,28,9,52,6,6,0,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,1996,,,,,,,,,,,,,,,,,,,,,,,262,64,55,9,52,12,11,1,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,1997,,,,,,,,,,,,,,,,,,,,,,,261,58,49,9,53,14,13,1,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,1998,,,,,,,,,,,,,,,,,,,,,,,261,33,23,10,52,9,9,0,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,1999,,,,,,,,,,,,,,,,,,,,,,,261,96,86,10,52,13,13,0,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,2000,,,,,,,,,,,,,,,,,,,,,,,260,40,29,11,52,10,10,0,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,2001,,,,,,,,,,,,,,,,,,,,,,,261,33,22,11,52,7,6,1,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,2002,,,,,,,,,,,,,,,,,,,,,,,261,32,21,11,52,6,5,1,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,2003,,,,,,,,,,,,,,,,,,,,,,,261,122,111,11,53,25,24,1,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,2004,,,,,,,,,,,,,,,,,,,,,,,262,77,64,13,52,13,13,0,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,2005,,,,,,,,,,,,,,,,,,,,,,,260,56,47,9,52,5,5,0,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,2006,,,,,,,,,,,,,,,,,,,,,,,260,34,25,9,52,4,4,0,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,2007,,,,,,,,,,,,,,,,,,,,,,,261,13,4,9,52,2,1,1,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,2008,,,,,,,,,,,,,,,,,,,,,,,262,9,0,9,53,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,2009,,,,,,,,,,,,,,,,,,,,,,,261,11,2,9,52,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,2010,,,,,,,,,,,,,,,,,,,,,,,261,9,0,9,52,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,2011,,,,,,,,,,,,,,,,,,,,,,,260,48,40,8,52,8,8,0,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,2012,,,,,,,,,,,,,,,,,,,,,,,261,9,0,9,52,1,0,1,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,2013,,,,,,,,,,,,,,,,,,,,,,,261,11,2,9,52,1,0,1,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,2014,,,,,,,,,,,,,,,,,,,,,,,261,13,4,9,53,3,2,1,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,2015,,,,,,,,,,,,,,,,,,,,,,,261,17,8,9,52,2,2,0,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,2016,,,,,,,,,,,,,,,,,,,,,,,261,9,0,9,52,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,2017,,,,,,,,,,,,,,,,,,,,,,,260,10,1,9,52,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,2018,,,,,,,,,,,,,,,,,,,,,,,261,12,3,9,52,1,0,1,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,2019,,,,,,,,,,,,,,,,,,,,,,,261,11,2,9,52,1,0,1,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,2020,,,,,,,,,,,,,,,,,,,,,,,262,10,1,9,53,1,0,1,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,2021,,,,,,,,,,,,,,,,,,,,,,,261,10,2,8,52,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,2022,,,,,,,,,,,,,,,,,,,,,,,260,9,0,9,52,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,2023,,,,,,,,,,,,,,,,,,,,,,,260,12,3,9,52,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,2024,,,,,,,,,,,,,,,,,,,,,,,262,12,2,10,52,2,0,2,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,2025,,,,,,,,,,,,,,,,,,,,,,,261,13,3,10,53,1,0,1,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_by_year,WTI,2026,,,,,,,,,,,,,,,,,,,,,,,219,8,1,7,44,1,1,0,,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_run_length,WTI,1 consecutive rows,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,601,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_run_length,WTI,2 consecutive rows,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,106,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_run_length,WTI,3 consecutive rows,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,31,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_run_length,WTI,4 consecutive rows,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,21,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_run_length,WTI,5 consecutive rows,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,5,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_run_length,WTI,6 consecutive rows,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_run_length,WTI,7 consecutive rows,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_run_length,WTI,9 consecutive rows,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_weekday,WTI,Mon,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,314,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_weekday,WTI,Tue,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,149,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_weekday,WTI,Wed,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,164,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_weekday,WTI,Thu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,186,,,,,,,,,,,,,,,,,,,,,,,,,,
+blank_weekday,WTI,Fri,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,224,,,,,,,,,,,,,,,,,,,,,,,,,,
+approach_comparison,WTI,B_lookback_2_days (primary),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,1748,1747,1710,37,19,144,136,141,15,90,1495,93,17,0.05576576216,0.05483521596,-0.4809904161,0.46232797,0.9509947792,,,,,,,
+approach_comparison,WTI,B_lookback_2_days (primary),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,extension_2023_2026,175,175,175,0,0,4,4,3,0,3,170,2,0,0.05359598312,0.05261000402,-0.1497659147,0.1533966116,0.977749283,,,,,,,
+approach_comparison,WTI,B_lookback_2_days (primary),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,full,1923,1922,1885,37,19,148,140,144,15,93,1665,95,17,0.05555661906,0.05463505219,-0.4809904161,0.46232797,0.9531982699,,,,,,,
+approach_comparison,WTI,A_strict_wednesday,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,1748,1747,1468,279,163,0,0,0,0,0,1468,0,0,0.05651563179,0.05609794159,-0.4809904161,0.46232797,0.9584526477,primary strict rows == lookback-0 build,,,,,,
+approach_comparison,WTI,A_strict_wednesday,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,extension_2023_2026,175,175,169,6,4,0,0,0,0,0,169,0,0,0.05418697599,0.05315292841,-0.1497659147,0.1533966116,0.9775276183,primary strict rows == lookback-0 build,,,,,,
+approach_comparison,WTI,A_strict_wednesday,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,full,1923,1922,1637,285,167,0,0,0,0,0,1637,0,0,0.05626473549,0.05580251547,-0.4809904161,0.46232797,0.9600886086,primary strict rows == lookback-0 build,,,,,,
+approach_comparison,WTI,B_lookback_1_day,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,1748,1747,1670,77,40,123,113,116,0,86,1495,89,0,0.05604360591,0.05512969279,-0.4809904161,0.46232797,0.951545912,,,,,,,
+approach_comparison,WTI,B_lookback_1_day,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,extension_2023_2026,175,175,175,0,0,4,4,3,0,3,170,2,0,0.05359598312,0.05261000402,-0.1497659147,0.1533966116,0.977749283,,,,,,,
+approach_comparison,WTI,B_lookback_1_day,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,full,1923,1922,1845,77,40,127,117,119,0,89,1665,91,0,0.05580438858,0.05489842832,-0.4809904161,0.46232797,0.9537216667,,,,,,,
+approach_comparison,WTI,C_independent_source_recovery,,,,,,,,,,,,,,,,,,,,,,"No compatible independent source: EIA (the original publisher) is blank on every FRED-blank date; USCRWTIC equals CL1 on 86% of days (futures-based, Stage 1 A05); CL1 is a futures price. Recovering spot from any of these would replace spot with futures and remove basis.",,,,,,,,,,full,,,0,,,,,,,,,,,,,,,,,,,,,,
+missing_wednesday,WTI,1991-12-25,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,,18.68,18.58,1991-12-24,observed on 1991-12-24,exchange holiday or closure (CL1 also missing)
+missing_wednesday,WTI,1992-01-01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,,19.15,18.63,1991-12-31,observed on 1991-12-31,exchange holiday or closure (CL1 also missing)
+missing_wednesday,WTI,1992-07-08,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,21.41,21.51,21.87,1992-07-07,observed on 1992-07-07,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1993-02-03,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,19.93,20,,1993-02-02,observed on 1993-02-02,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1993-04-28,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,20.19,20.21,19.83,1993-04-27,observed on 1993-04-27,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1993-12-08,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,14.59,14.53,14.57,1993-12-07,observed on 1993-12-07,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1993-12-15,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,14.41,14.47,14.5,1993-12-14,observed on 1993-12-14,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1994-02-23,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,14.24,14.28,,1994-02-22,observed on 1994-02-22,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1994-03-02,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,14.76,14.78,14.5,1994-03-01,observed on 1994-03-01,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1994-03-23,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,15.2,15.04,15.37,1994-03-22,observed on 1994-03-22,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1994-03-30,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,14.38,14.41,,1994-03-29,observed on 1994-03-29,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1994-04-06,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,15.77,15.67,15.67,1994-04-05,observed on 1994-04-05,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1994-04-27,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,,16.82,17.66,1994-04-26,observed on 1994-04-26,exchange holiday or closure (CL1 also missing)
+missing_wednesday,WTI,1994-05-04,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,16.86,16.93,,1994-05-03,observed on 1994-05-03,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1994-06-22,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,20.04,20.08,20.68,1994-06-21,observed on 1994-06-21,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1994-10-12,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,17.19,17.74,17.95,1994-10-11,observed on 1994-10-11,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1994-11-23,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,18.15,17.7,17.43,1994-11-22,observed on 1994-11-22,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1995-01-11,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,17.72,17.42,,1995-01-10,observed on 1995-01-10,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1995-03-08,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,18.33,18.59,18.56,1995-03-07,observed on 1995-03-07,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1995-04-12,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,19.55,19.84,19.61,1995-04-11,observed on 1995-04-11,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1995-05-10,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,19.75,19.67,20.32,1995-05-09,observed on 1995-05-09,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1995-05-31,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,18.89,,,,no observation: held contract price missing; next held contract price missing; spot FRED:DCOILWTICO missing,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1995-10-04,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,17.3,17.56,17.67,1995-10-03,observed on 1995-10-03,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1996-01-24,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,18.28,18.58,18.49,1996-01-23,observed on 1996-01-23,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1996-01-31,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,17.74,17.65,17.33,1996-01-30,observed on 1996-01-30,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1996-02-28,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,19.29,19.65,19.45,1996-02-27,observed on 1996-02-27,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1996-03-06,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,20.19,,19.24,1996-03-04,observed on 1996-03-04,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1996-06-26,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,20.65,20.13,,1996-06-25,observed on 1996-06-25,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1996-07-31,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,20.42,,,,no observation: spot FRED:DCOILWTICO missing,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1996-08-21,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,21.72,,23.1,1996-08-19,observed on 1996-08-19,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1996-09-11,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,24.75,,23.75,1996-09-09,observed on 1996-09-09,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1996-10-09,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,25.07,,25.25,1996-10-07,observed on 1996-10-07,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1996-10-30,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,24.28,,24.75,1996-10-28,observed on 1996-10-28,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1996-12-04,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,24.8,24.8,24.7,1996-12-03,observed on 1996-12-03,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1996-12-25,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,,,26.4,1996-12-23,observed on 1996-12-23,exchange holiday or closure (CL1 also missing)
+missing_wednesday,WTI,1997-01-01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,,25.9,25.35,1996-12-31,observed on 1996-12-31,exchange holiday or closure (CL1 also missing)
+missing_wednesday,WTI,1997-01-29,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,24.47,23.9,,1997-01-28,observed on 1997-01-28,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1997-02-12,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,21.86,22.35,22.45,1997-02-11,observed on 1997-02-11,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1997-03-19,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,22.04,22,,1997-03-18,observed on 1997-03-18,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1997-04-09,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,19.27,19.35,,1997-04-08,observed on 1997-04-08,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1997-05-28,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,20.79,,,,no observation: held contract price missing; next held contract price missing; spot FRED:DCOILWTICO missing,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1997-06-04,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,20.12,20.35,,1997-06-03,observed on 1997-06-03,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1997-08-20,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,20.06,,19.94,1997-08-18,observed on 1997-08-18,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1997-09-03,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,19.61,19.73,,1997-09-02,observed on 1997-09-02,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1997-10-01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,21.05,21.13,21.29,1997-09-30,observed on 1997-09-30,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1997-10-15,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,20.57,20.75,21.34,1997-10-14,observed on 1997-10-14,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1997-11-12,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,20.49,20.54,20.46,1997-11-11,observed on 1997-11-11,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1997-11-19,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,19.8,20.01,20.29,1997-11-18,observed on 1997-11-18,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1997-11-26,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,19.15,19.35,19.41,1997-11-25,observed on 1997-11-25,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1998-01-14,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,16.45,,16.53,1998-01-12,observed on 1998-01-12,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1998-05-06,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,15.37,15.48,15.98,1998-05-05,observed on 1998-05-05,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1998-05-27,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,14.99,14.9,,1998-05-26,observed on 1998-05-26,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1998-07-29,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,14.09,,14.37,1998-07-27,observed on 1998-07-27,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1998-09-09,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,14.12,14.34,,1998-09-08,observed on 1998-09-08,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1998-11-04,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,14.14,14.24,14.45,1998-11-03,observed on 1998-11-03,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1998-11-18,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,12.14,12.46,12.81,1998-11-17,observed on 1998-11-17,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1998-12-23,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,11.33,10.99,10.86,1998-12-22,observed on 1998-12-22,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1998-12-30,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,11.75,11.82,11.59,1998-12-29,observed on 1998-12-29,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1999-03-31,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,16.76,,,,no observation: spot FRED:DCOILWTICO missing,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1999-04-14,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,16.47,,,,no observation: spot FRED:DCOILWTICO missing,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1999-06-02,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,16.65,16.31,,1999-06-01,observed on 1999-06-01,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1999-07-07,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,19.77,,,,no observation: held contract price missing; next held contract price missing; spot FRED:DCOILWTICO missing,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1999-07-14,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,19.92,20.33,,1999-07-13,observed on 1999-07-13,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1999-07-28,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,20.54,,,,no observation: spot FRED:DCOILWTICO missing,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1999-08-11,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,21.52,,,,no observation: spot FRED:DCOILWTICO missing,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1999-09-08,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,22.66,,,,no observation: held contract price missing; next held contract price missing; spot FRED:DCOILWTICO missing,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1999-10-06,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,23.27,,,,no observation: spot FRED:DCOILWTICO missing,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1999-10-13,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,23.06,,21.58,1999-10-11,observed on 1999-10-11,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1999-10-20,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,22.2,22.36,,1999-10-19,observed on 1999-10-19,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1999-10-27,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,22.92,23.17,,1999-10-26,observed on 1999-10-26,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,1999-11-03,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,22.56,22.49,,1999-11-02,observed on 1999-11-02,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2000-01-26,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,27.84,30.28,29.25,2000-01-25,observed on 2000-01-25,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2000-03-29,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,26.45,,27.59,2000-03-27,observed on 2000-03-27,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2000-04-05,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,25.83,25.46,,2000-04-04,observed on 2000-04-04,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2000-05-03,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,26.75,26.86,25.84,2000-05-02,observed on 2000-05-02,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2000-06-14,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,32.85,32.73,31.76,2000-06-13,observed on 2000-06-13,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2000-07-05,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,30.67,,,,no observation: held contract price missing; next held contract price missing; spot FRED:DCOILWTICO missing,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2000-07-26,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,27.81,27.89,,2000-07-25,observed on 2000-07-25,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2000-08-16,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,31.8,31.43,31.92,2000-08-15,observed on 2000-08-15,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2000-09-27,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,31.46,31.78,,2000-09-26,observed on 2000-09-26,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2000-12-13,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,28.74,29.81,29.75,2000-12-12,observed on 2000-12-12,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2001-07-04,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,,26.28,26.02,2001-07-03,observed on 2001-07-03,exchange holiday or closure (CL1 also missing)
+missing_wednesday,WTI,2001-07-25,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,26.84,26.18,25.88,2001-07-24,observed on 2001-07-24,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2001-09-26,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,22.38,21.63,21.46,2001-09-25,observed on 2001-09-25,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2001-10-10,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,22.53,22.55,,2001-10-09,observed on 2001-10-09,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2001-11-07,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,20.09,19.93,20,2001-11-06,observed on 2001-11-06,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2001-11-14,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,19.74,21.56,21.26,2001-11-13,observed on 2001-11-13,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2001-12-12,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,18.36,18.04,18.32,2001-12-11,observed on 2001-12-11,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2002-03-06,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,23.15,23.18,,2002-03-05,observed on 2002-03-05,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2002-05-29,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,25.76,25.08,,2002-05-28,observed on 2002-05-28,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2002-06-19,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,25.31,,25.98,2002-06-17,observed on 2002-06-17,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2002-07-17,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,27.88,27.68,27.23,2002-07-16,observed on 2002-07-16,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2002-11-13,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,25.19,26.19,26.02,2002-11-12,observed on 2002-11-12,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2002-12-25,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,,32.13,32.09,2002-12-24,observed on 2002-12-24,exchange holiday or closure (CL1 also missing)
+missing_wednesday,WTI,2003-01-01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,,31.21,31.41,2002-12-31,observed on 2002-12-31,exchange holiday or closure (CL1 also missing)
+missing_wednesday,WTI,2003-02-12,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,35.77,35.43,34.46,2003-02-11,observed on 2003-02-11,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2003-02-19,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,37.16,36.88,,2003-02-18,observed on 2003-02-18,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2003-03-26,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,28.63,33.42,29.51,2003-03-25,observed on 2003-03-25,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2003-04-02,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,28.56,29.48,31.14,2003-04-01,observed on 2003-04-01,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2003-04-09,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,28.85,27.97,,2003-04-08,observed on 2003-04-08,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2003-04-30,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,25.8,25.32,,2003-04-29,observed on 2003-04-29,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2003-05-07,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,26.23,,,,no observation: spot FRED:DCOILWTICO missing,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2003-05-14,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,29.17,28.51,,2003-05-13,observed on 2003-05-13,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2003-06-04,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,30.05,,,,no observation: spot FRED:DCOILWTICO missing,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2003-06-11,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,32.36,31.72,31.36,2003-06-10,observed on 2003-06-10,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2003-06-18,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,30.36,31.08,,2003-06-17,observed on 2003-06-17,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2003-07-02,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,30.15,30.41,30.15,2003-07-01,observed on 2003-07-01,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2003-07-09,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,30.88,,30.08,2003-07-07,observed on 2003-07-07,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2003-07-30,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,30.68,30.21,29.98,2003-07-29,observed on 2003-07-29,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2003-08-20,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,30.95,30.76,,2003-08-19,observed on 2003-08-19,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2003-08-27,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,31.21,32.01,31.43,2003-08-26,observed on 2003-08-26,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2003-09-03,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,29.49,29.57,,2003-09-02,observed on 2003-09-02,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2003-10-08,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,29.81,,,,no observation: spot FRED:DCOILWTICO missing,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2003-10-15,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,31.77,,31.91,2003-10-13,observed on 2003-10-13,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2003-11-05,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,30.3,,,,no observation: spot FRED:DCOILWTICO missing,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2003-11-12,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,31.33,31.21,31.01,2003-11-11,observed on 2003-11-11,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2003-11-19,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,32.92,,,,no observation: spot FRED:DCOILWTICO missing,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2003-12-17,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,33.35,32.94,,2003-12-16,observed on 2003-12-16,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2003-12-31,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,32.52,33.01,32.51,2003-12-30,observed on 2003-12-30,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2004-01-07,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,33.62,33.54,,2004-01-06,observed on 2004-01-06,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2004-02-11,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,34,,32.91,2004-02-09,observed on 2004-02-09,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2004-02-25,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,35.68,35.85,35.75,2004-02-24,observed on 2004-02-24,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2004-03-03,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,35.8,36.6,,2004-03-02,observed on 2004-03-02,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2004-03-10,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,36.1,,36.53,2004-03-08,observed on 2004-03-08,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2004-03-31,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,35.76,36.15,,2004-03-30,observed on 2004-03-30,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2004-04-07,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,36.15,,34.29,2004-04-05,observed on 2004-04-05,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2004-04-28,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,37.46,37.49,37.02,2004-04-27,observed on 2004-04-27,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2004-05-12,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,40.77,40.3,38.9,2004-05-11,observed on 2004-05-11,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2004-05-19,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,41.5,40.32,41.53,2004-05-18,observed on 2004-05-18,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2004-08-04,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,42.83,44.13,,2004-08-03,observed on 2004-08-03,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2004-09-08,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,42.77,43.18,,2004-09-07,observed on 2004-09-07,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2004-10-20,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,54.92,53.28,53.59,2004-10-19,observed on 2004-10-19,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2005-01-12,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,46.37,45.66,45.31,2005-01-11,observed on 2005-01-11,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2005-03-16,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,56.46,,54.9,2005-03-14,observed on 2005-03-14,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2005-10-05,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,62.79,63.74,65.36,2005-10-04,observed on 2005-10-04,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2005-11-02,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,59.75,59.85,59.8,2005-11-01,observed on 2005-11-01,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2005-12-07,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,59.21,59.96,,2005-12-06,observed on 2005-12-06,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2006-07-12,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,74.95,74.05,73.5,2006-07-11,observed on 2006-07-11,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2006-09-20,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,60.46,61.77,,2006-09-19,observed on 2006-09-19,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2006-09-27,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,62.96,60.63,60.74,2006-09-26,observed on 2006-09-26,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2006-11-08,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,59.83,58.94,60.11,2006-11-07,observed on 2006-11-07,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2007-02-14,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,58,58.98,57.76,2007-02-13,observed on 2007-02-13,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2007-07-04,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,,71.41,71.11,2007-07-03,observed on 2007-07-03,exchange holiday or closure (CL1 also missing)
+missing_wednesday,WTI,2011-04-20,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,111.45,,106.7,2011-04-18,observed on 2011-04-18,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2011-05-04,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,109.24,110.6,113.03,2011-05-03,observed on 2011-05-03,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2011-05-25,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,101.32,,97.06,2011-05-23,observed on 2011-05-23,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2011-06-15,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,94.81,,97.2,2011-06-13,observed on 2011-06-13,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2011-06-22,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,95.41,93.7,,2011-06-21,observed on 2011-06-21,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2011-06-29,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,94.77,92.9,,2011-06-28,observed on 2011-06-28,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2011-07-06,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,96.65,,,,no observation: held contract price missing; next held contract price missing; spot FRED:DCOILWTICO missing,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2011-07-13,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,98.05,,,,no observation: spot FRED:DCOILWTICO missing,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2012-07-04,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,,87.74,83.72,2012-07-03,observed on 2012-07-03,exchange holiday or closure (CL1 also missing)
+missing_wednesday,WTI,2013-12-25,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,,98.87,98.62,2013-12-24,observed on 2013-12-24,exchange holiday or closure (CL1 also missing)
+missing_wednesday,WTI,2014-01-01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,,98.17,98.9,2013-12-31,observed on 2013-12-31,exchange holiday or closure (CL1 also missing)
+missing_wednesday,WTI,2014-12-03,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,67.38,66.99,68.98,2014-12-02,observed on 2014-12-02,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2014-12-24,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,55.84,56.78,55.25,2014-12-23,observed on 2014-12-23,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2015-01-28,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,44.45,,,,no observation: spot FRED:DCOILWTICO missing,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2015-02-04,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,48.45,53.04,,2015-02-03,observed on 2015-02-03,EIA did not publish a spot price although NYMEX traded
+missing_wednesday,WTI,2018-07-04,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,,74.19,73.89,2018-07-03,observed on 2018-07-03,exchange holiday or closure (CL1 also missing)
+missing_wednesday,WTI,2019-12-25,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,,61.17,60.51,2019-12-24,observed on 2019-12-24,exchange holiday or closure (CL1 also missing)
+missing_wednesday,WTI,2020-01-01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,original_1990_2023,,,,,,,,,,,,,,,,,,,,,61.14,61.66,2019-12-31,observed on 2019-12-31,exchange holiday or closure (CL1 also missing)
+missing_wednesday,WTI,2024-06-19,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,extension_2023_2026,,,,,,,,,,,,,,,,,,,,,82.67,81.33,2024-06-18,observed on 2024-06-18,exchange holiday or closure (CL1 also missing)
+missing_wednesday,WTI,2024-12-25,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,extension_2023_2026,,,,,,,,,,,,,,,,,,,,,70.87,69.5,2024-12-24,observed on 2024-12-24,exchange holiday or closure (CL1 also missing)
+missing_wednesday,WTI,2025-01-01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,extension_2023_2026,,,,,,,,,,,,,,,,,,,,,72.44,71.73,2024-12-31,observed on 2024-12-31,exchange holiday or closure (CL1 also missing)
+missing_wednesday,WTI,2026-11-04,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,extension_2023_2026,,,,,,,,,,,,,,,,,,,,88.12,99.64,100.06,2026-11-03,observed on 2026-11-03,EIA did not publish a spot price although NYMEX traded

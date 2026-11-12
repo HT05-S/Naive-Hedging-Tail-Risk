@@ -1,0 +1,46 @@
+manifest_ticker,manifest_field,expected_file,file_exists,manifest_first,actual_first,manifest_last,actual_last,manifest_rows,actual_total_rows,actual_valid_obs,metadata_match,discrepancies,completeness,manifest_notes
+USCRWTIC Index,PX_LAST,data/raw/bloomberg/USCRWTIC_Index.csv,True,2017-01-23,2017-01-23,2026-11-06,2026-11-06,2448.0,2448.0,2448.0,yes,,INCOMPLETE vs expected start (per manifest note),WTI Cushing spot (verify); starts 2017-01-23 (expected 1990-01-01)
+GBPUSD Curncy,PX_LAST,data/raw/bloomberg/GBPUSD_Curncy.csv,True,1990-01-01,1990-01-01,2026-11-09,2026-11-09,9616.0,9616.0,9616.0,yes,,,
+SPX Index,PX_LAST,data/raw/bloomberg/SPX_Index.csv,True,1990-01-02,1990-01-02,2026-11-09,2026-11-09,9282.0,9282.0,9282.0,yes,,,price index
+GOLDLNPM Index,PX_LAST,data/raw/bloomberg/GOLDLNPM_Index.csv,True,,,,,0.0,0.0,0.0,yes,,EMPTY,LBMA Gold PM (verify)
+XAU Curncy,PX_LAST,data/raw/bloomberg/XAU_Curncy.csv,True,1990-01-02,1990-01-02,2026-11-09,2026-11-09,9557.0,9557.0,9557.0,yes,,,gold backup
+BRR Index,PX_LAST,data/raw/bloomberg/BRR_Index.csv,True,2016-11-14,2016-11-14,2026-11-09,2026-11-09,3270.0,3270.0,3270.0,yes,,INCOMPLETE vs expected start (per manifest note),CME CF BRR (verify); starts 2016-11-14 (expected 2016-11-01)
+XBTUSD Curncy,PX_LAST,data/raw/bloomberg/XBTUSD_Curncy.csv,True,2010-07-19,2010-07-19,2026-11-09,2026-11-09,5259.0,5259.0,5259.0,yes,,,bitcoin backup
+NGUSHHUB Index,PX_LAST,data/raw/bloomberg/NGUSHHUB_Index.csv,True,1999-01-04,1999-01-04,2026-11-09,2026-11-09,6863.0,6863.0,6863.0,yes,,INCOMPLETE vs expected start (per manifest note),Henry Hub spot (verify); FRED DHHNGSP is fallback; starts 1999-01-04 (expected 1990-01-01)
+CL1 Comdty,PX_LAST,data/raw/bloomberg/CL1_Comdty.csv,True,1990-01-02,1990-01-02,2026-11-09,2026-11-09,9266.0,9266.0,9266.0,yes,,,
+CL2 Comdty,PX_LAST,data/raw/bloomberg/CL2_Comdty.csv,True,1990-01-02,1990-01-02,2026-11-09,2026-11-09,9266.0,9266.0,9266.0,yes,,,
+CL3 Comdty,PX_LAST,data/raw/bloomberg/CL3_Comdty.csv,True,1990-01-02,1990-01-02,2026-11-09,2026-11-09,9265.0,9265.0,9265.0,yes,,,
+BP1 Curncy,PX_LAST,data/raw/bloomberg/BP1_Curncy.csv,True,1990-01-02,1990-01-02,2026-11-09,2026-11-09,9353.0,9353.0,9353.0,yes,,,
+BP2 Curncy,PX_LAST,data/raw/bloomberg/BP2_Curncy.csv,True,1990-01-02,1990-01-02,2026-11-09,2026-11-09,9326.0,9326.0,9326.0,yes,,,
+BP3 Curncy,PX_LAST,data/raw/bloomberg/BP3_Curncy.csv,True,1990-01-02,1990-01-02,2026-11-09,2026-11-09,9246.0,9246.0,9246.0,yes,,,
+SP1 Index,PX_LAST,data/raw/bloomberg/SP1_Index.csv,True,1990-01-02,1990-01-02,2021-09-17,2021-09-17,8057.0,8057.0,8057.0,yes,,ends 2021-09-17 (contract delisted; genuine),
+SP2 Index,PX_LAST,data/raw/bloomberg/SP2_Index.csv,True,1990-01-02,1990-01-02,2021-09-17,2021-09-17,8001.0,8001.0,8001.0,yes,,ends 2021-09-17 (contract delisted; genuine),
+ES1 Index,PX_LAST,data/raw/bloomberg/ES1_Index.csv,True,1997-09-09,1997-09-09,2026-11-09,2026-11-09,7397.0,7397.0,7397.0,yes,,,
+ES2 Index,PX_LAST,data/raw/bloomberg/ES2_Index.csv,True,1997-09-09,1997-09-09,2026-11-09,2026-11-09,7372.0,7372.0,7372.0,yes,,,
+ES3 Index,PX_LAST,data/raw/bloomberg/ES3_Index.csv,True,1997-12-18,1997-12-18,2026-11-09,2026-11-09,4843.0,4843.0,4843.0,yes,,INCOMPLETE vs expected start (per manifest note),starts 1997-12-18 (expected 1997-09-09)
+GC1 Comdty,PX_LAST,data/raw/bloomberg/GC1_Comdty.csv,True,1990-01-02,1990-01-02,2026-11-09,2026-11-09,9266.0,9266.0,9266.0,yes,,,
+GC2 Comdty,PX_LAST,data/raw/bloomberg/GC2_Comdty.csv,True,1990-01-02,1990-01-02,2026-11-09,2026-11-09,9266.0,9266.0,9266.0,yes,,,
+GC3 Comdty,PX_LAST,data/raw/bloomberg/GC3_Comdty.csv,True,1990-01-02,1990-01-02,2026-11-09,2026-11-09,9266.0,9266.0,9266.0,yes,,,
+BTC1 Curncy,PX_LAST,data/raw/bloomberg/BTC1_Curncy.csv,True,2017-12-15,2017-12-15,2026-11-09,2026-11-09,2241.0,2241.0,2241.0,yes,,,
+BTC2 Curncy,PX_LAST,data/raw/bloomberg/BTC2_Curncy.csv,True,2017-12-15,2017-12-15,2026-11-09,2026-11-09,2241.0,2241.0,2241.0,yes,,,
+BTC3 Curncy,PX_LAST,data/raw/bloomberg/BTC3_Curncy.csv,True,2017-12-15,2017-12-15,2026-11-09,2026-11-09,2241.0,2241.0,2241.0,yes,,,
+NG1 Comdty,PX_LAST,data/raw/bloomberg/NG1_Comdty.csv,True,1990-04-03,1990-04-03,2026-11-09,2026-11-09,9197.0,9197.0,9197.0,yes,,,
+NG2 Comdty,PX_LAST,data/raw/bloomberg/NG2_Comdty.csv,True,1990-04-03,1990-04-03,2026-11-09,2026-11-09,9201.0,9201.0,9201.0,yes,,,
+NG3 Comdty,PX_LAST,data/raw/bloomberg/NG3_Comdty.csv,True,1990-04-03,1990-04-03,2026-11-09,2026-11-09,9202.0,9202.0,9202.0,yes,,,
+CL_contracts,LAST_TRADEABLE_DT,data/raw/bloomberg/CL_contracts.csv,True,1983-05-18,1983-05-18,2037-01-20,2037-01-20,645.0,645.0,645.0,yes,,,earliest contract CLM83 Comdty expires 1983-05-18
+BP_contracts,LAST_TRADEABLE_DT,data/raw/bloomberg/BP_contracts.csv,True,1987-03-13,1987-03-13,2031-09-15,2031-09-15,272.0,272.0,272.0,yes,,,earliest contract BPH87 Curncy expires 1987-03-13
+SP_contracts,LAST_TRADEABLE_DT,data/raw/bloomberg/SP_contracts.csv,True,1982-06-17,1982-06-17,2021-09-17,2021-09-17,170.0,170.0,170.0,yes,,"ends 2021-09-17, before Bloomberg pull end",earliest contract SPM82 Index expires 1982-06-17
+ES_contracts,LAST_TRADEABLE_DT,data/raw/bloomberg/ES_contracts.csv,True,1997-09-18,1997-09-18,2031-12-19,2031-12-19,138.0,138.0,138.0,yes,,,earliest contract ESU97 Index expires 1997-09-18 (chain does not reach 1990)
+GC_contracts,LAST_TRADEABLE_DT,data/raw/bloomberg/GC_contracts.csv,True,1975-01-29,1975-01-29,2032-06-28,2032-06-28,655.0,655.0,655.0,yes,,,earliest contract GCF75 Comdty expires 1975-01-29
+BTC_contracts,LAST_TRADEABLE_DT,data/raw/bloomberg/BTC_contracts.csv,True,2018-01-26,2018-01-26,2028-03-31,2028-03-31,116.0,116.0,116.0,yes,,,earliest contract BTCF18 Curncy expires 2018-01-26 (chain does not reach 1990)
+NG_contracts,LAST_TRADEABLE_DT,data/raw/bloomberg/NG_contracts.csv,True,1990-05-21,1990-05-21,2038-11-26,2038-11-26,583.0,583.0,583.0,yes,,,earliest contract NGM90 Comdty expires 1990-05-21 (chain does not reach 1990)
+SOXX US Equity,PX_LAST,data/raw/bloomberg/SOXX_US_Equity.csv,True,2001-07-13,2001-07-13,2026-11-09,2026-11-09,6369.0,6369.0,6369.0,yes,,,
+SOXX US Equity,TOT_RETURN_INDEX_GROSS_DVDS,data/raw/bloomberg/SOXX_US_Equity.csv,True,2001-07-13,2001-07-13,2026-11-09,2026-11-09,6369.0,6369.0,6369.0,yes,,,
+CFNAI,CFNAI,data/raw/fred/CFNAI.csv,True,1967-03-01,1967-03-01,2026-09-01,2026-09-01,715.0,715.0,715.0,yes,,,FRED
+USREC,USREC,data/raw/fred/USREC.csv,True,1854-12-01,1854-12-01,2026-10-01,2026-10-01,2063.0,2063.0,2063.0,yes,,,FRED
+DHHNGSP,DHHNGSP,data/raw/fred/DHHNGSP.csv,True,1997-01-07,1997-01-07,2026-11-03,2026-11-03,7781.0,7781.0,5722.0,yes,"manifest rows count blanks: total=7781, valid=5722","ends 2026-11-03, before Bloomberg pull end",FRED
+DCOILWTICO,DCOILWTICO,data/raw/fred/DCOILWTICO.csv,True,1986-01-02,1986-01-02,2026-11-03,2026-11-03,10654.0,10654.0,9537.0,yes,"manifest rows count blanks: total=10654, valid=9537","ends 2026-11-03, before Bloomberg pull end",FRED
+(context doc section 5),,data/raw/eia/RWTCd.xls,False,,,,,,,,n/a,claimed by FRE6123_Project_Context.md but absent from data/raw (not in manifest either),,
+(context doc section 5),,data/raw/eia/RNGWHHDd.xls,False,,,,,,,,n/a,claimed by FRE6123_Project_Context.md but absent from data/raw (not in manifest either),,
+(context doc section 5),,data/raw/eia/RWTC.csv,False,,,,,,,,n/a,claimed by FRE6123_Project_Context.md but absent from data/raw (not in manifest either),,
+(context doc section 5),,data/raw/eia/RNGWHHD.csv,False,,,,,,,,n/a,claimed by FRE6123_Project_Context.md but absent from data/raw (not in manifest either),,
