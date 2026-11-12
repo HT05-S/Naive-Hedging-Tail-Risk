@@ -524,7 +524,7 @@ for title, d, markets in (
     rows += score_rows(d, markets)
 table("Scorecard: scenarios won by each model and tests against the naïve hedge",
       ["Market", "Weeks", "Naïve", "OLS", "HS", "CFE", "Copula", "SV", "p < 0.10", "p > 0.5", "Paired p < 0.05", "Paired p > 0.95"],
-      rows, [0.9, 0.48, 0.45, 0.38, 0.35, 0.38, 0.58, 0.35, 0.55, 0.5, 0.75, 0.83], size=8.5, group_rows=groups,
+      rows, [0.85, 0.52, 0.5, 0.42, 0.38, 0.42, 0.6, 0.38, 0.55, 0.5, 0.68, 0.7], size=8, group_rows=groups,
       note="Columns Naïve to SV count the scenarios (of 12) in which the model has the highest tail-risk effectiveness. "
            "The last four columns count the 60 tests of an estimated model against the naïve hedge (5 models × 12 "
            "scenarios): the Wilcox et al. (2014) test with p below 0.10 (model better), the share with p above 0.5, and "
@@ -715,7 +715,7 @@ for e, m in pick:
 n_ahead = sum(np.exp(max(S.loc[k][f"{e}_worst_week"] for e in est)) - np.exp(S.loc[k]["naive_worst_week"]) > 0.02 for k in pick)
 table("Worst weekly return of a long spot position in stress episodes: unhedged and hedged",
       ["Episode", "Market", "Weeks", "Unhedged", "Naïve hedge", "Best estimated model", "Worst estimated model"], rows,
-      [1.75, 0.85, 0.5, 0.75, 0.8, 1.2, 0.9], size=8.5,
+      [1.65, 0.8, 0.45, 0.7, 0.75, 1.35, 0.8], size=8.5,
       note="Out-of-sample hedge ratios that minimize 5% CVaR. Simple weekly returns; a negative value is a loss. The "
            "best estimated model is known only after the fact.")
 para(
