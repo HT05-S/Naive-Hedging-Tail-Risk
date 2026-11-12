@@ -140,7 +140,7 @@ Risk levels: **1%, 5% and 10%** (downside) and **90%, 95% and 99%** (upside), fo
 
 ## 5. Data: what we have and where
 
-All data is under `data/raw/`, relative to the FRM folder: `/Users/kishore/Documents/NYU_FRE/FRM/data/raw/`.
+All data is under `data/raw/`
 
 ```
 data/raw/bloomberg/<TICKER_WITH_UNDERSCORES>.csv   date,PX_LAST   (daily, trading days, unadjusted, no fill)
@@ -219,27 +219,29 @@ The last common Wednesday across sources is **2026-11-04**: FRED ends Nov 3 and 
 
 ## 8. Environment
 
-- **Use the `iaqf` mamba environment** on Sai's machine: `~/mamba/envs/iaqf/bin/python`. It has Python 3.11.14, pandas 3.0.1, numpy 2.4.2, scipy 1.17.1, statsmodels 0.14.6 and matplotlib 3.10.8.
-- Teammates should create an equivalent environment with these packages. Note that pandas 3.x changes some defaults (copy-on-write, string dtype).
-- `xlrd` is needed only to read the EIA `.xls` files. It is not installed in `iaqf`; the EIA data is already saved as CSV.
-- On Sai's machine, the Anaconda base `pandas` is broken (missing `__init__.py`). Do not use `~/opt/anaconda3/bin/python3`.
-- The validation scripts written so far lived in a temporary folder and are **not** in the repository. The logic is described in §6; recreate it as `src/` code during implementation.
+- Python 3.11 or newer with the packages in `requirements.txt` at the repo root. Setup steps are in `README.md`.
+- pandas 3.x changes some defaults (copy-on-write, string dtype).
+- `xlrd` is needed only to read the EIA `.xls` verification files.
+- The validation scripts from 2026-11-09/10 lived in a temporary folder and are **not** in the repository. The logic is described in §6 and in `audit/REPLICATION_CONVENTIONS_NOTE.md`.
 
 ---
 
-## 9. File map (FRM folder)
+## 9. File map (repo)
 
 | Path | What it is |
 |---|---|
-| `Projects/FRE 6123 Group Project Description and Evaluation Criteria Fall 20261.docx` | Course guidelines and rubric |
-| `Projects/FRE 6123_Sample_Group_Project_Topics_Fall_20261.docx` | Professor's topic list |
-| `Projects/Journal of Futures Markets - 2025 - Cao - Tail Risk Hedging ….pdf` | **Primary paper** |
-| `Projects/*.pdf` (8 others) | Other candidate papers reviewed |
-| `Projects/FRE6123_Initial_Proposal_Tomar_Dhanesankar_Kishore.docx` | Initial proposal as submitted Oct 9 (Kavin's surname misspelled in it) |
-| `Projects/FRE6123_Revised_Proposal_Tomar_Dhanasekaran_Kishore.docx` | **Current revised proposal** (also copied to `~/Downloads`) |
-| `Projects/Team_Pitch_Naive_Hedge.docx` | Internal team pitch; outdated (pre-feedback design with the AI cross-hedge) |
-| `Projects/FRE6123_Initial_Proposal_Tail_Risk_Hedging.docx` | Early draft of the initial proposal; superseded |
+| `docs/course/Group_Project_Description_and_Rubric.docx` | Course guidelines and rubric |
+| `docs/course/Sample_Group_Project_Topics.docx` | Professor's topic list |
+| `docs/paper/Cao_Conlon_2025_Tail_Risk_Hedging_JFM.pdf` | **Primary paper** |
+| `docs/proposal/FRE6123_Initial_Proposal_Tomar_Dhanesankar_Kishore.docx` | Initial proposal as submitted Oct 9 (Kavin's surname misspelled in it) |
+| `docs/proposal/FRE6123_Revised_Proposal_Tomar_Dhanasekaran_Kishore.docx` | **Current revised proposal** |
+| `docs/proposal/Team_Pitch_Naive_Hedge.docx` | Internal team pitch; outdated (pre-feedback design with the AI cross-hedge) |
+| `docs/proposal/FRE6123_Initial_Proposal_Tail_Risk_Hedging.docx` | Early draft of the initial proposal; superseded |
 | `data/raw/…` | Raw data (see §5) |
+| `audit/` | Data audit reports, methodology decision log, replication conventions note |
+| `src/frm_data/`, `tests/` | Data code and its tests |
+
+The eight other candidate papers reviewed in §2 were removed from the repo on 2026-11-12.
 
 ---
 

@@ -1,0 +1,9 @@
+# One environment for the whole project. Python 3.11 or newer.
+#   pip install -r requirements.txt
+pandas>=3.0
+numpy>=2.4
+scipy>=1.17
+statsmodels>=0.14
+matplotlib>=3.10
+xlrd>=2.0.1      # only for the EIA .xls verification files
+pytest>=8

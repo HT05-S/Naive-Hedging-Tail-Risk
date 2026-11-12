@@ -1,0 +1,4 @@
+# Raw data files are checked out with Windows (CRLF) line endings on every machine.
+# The Stage 1 audit recorded their SHA-256 hashes in that form, so this keeps the
+# integrity test (tests/test_stage1b.py, TestRawImmutability) passing on Mac and Linux too.
+data/raw/** text eol=crlf

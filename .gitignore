@@ -1,5 +1,12 @@
-
+# Python
 .venv/
 __pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+*.egg-info/
+
+# OS and archive clutter
+.DS_Store
 __MACOSX/
-*/pyc
+Thumbs.db
