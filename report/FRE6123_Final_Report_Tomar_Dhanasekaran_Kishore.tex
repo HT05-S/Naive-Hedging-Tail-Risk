@@ -1,0 +1,582 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{newtxtext,newtxmath}
+\usepackage[margin=1in]{geometry}
+\usepackage{microtype,parskip,graphicx,booktabs,array,float,caption,titlesec,textcomp}
+\usepackage[hidelinks]{hyperref}
+\DeclareUnicodeCharacter{2212}{\textminus}
+\captionsetup{font=small,labelfont=bf,labelsep=period,justification=raggedright,singlelinecheck=false,skip=4pt}
+\titleformat*{\section}{\large\bfseries}
+\titleformat*{\subsection}{\normalsize\bfseries\itshape}
+\titlespacing*{\section}{0pt}{14pt}{4pt}
+\titlespacing*{\subsection}{0pt}{10pt}{2pt}
+\hypersetup{pdftitle={Is the Naive Hedge Still Hard to Beat?},pdfauthor={Hina Tomar, Kavin Dhanasekaran, Sai Kishore}}
+\raggedbottom
+\emergencystretch=1em
+\begin{document}
+\begin{center}
+{\LARGE\bfseries Is the Naïve Hedge Still Hard to Beat?\par}\vspace{4pt}
+{\large Tail-Risk Hedging with Futures, 1990–2026, with Evidence from Bitcoin and Natural Gas\par}\vspace{10pt}
+{Hina Tomar, Kavin Dhanasekaran and Sai Kishore\par}\vspace{2pt}
+{\small FRE 6123 Financial Risk Management, Fall 2026 · Group Project: Final Report\par}
+{\small Department of Finance and Risk Engineering, NYU Tandon School of Engineering\par}
+{\small November 13, 2026\par}
+\end{center}
+
+\section*{Abstract}
+
+Cao and Conlon (2025) report that a one-for-one futures hedge reduces tail risk at least as well as five estimated hedge-ratio models in four markets between 1990 and June 2023. We rebuild their study from raw Bloomberg and FRED data with our own code and ask two questions: does the result survive an independent replication and three further years of data, and does it extend to Bitcoin and natural gas, two markets with fatter tails and a less stable link between spot and futures prices? It does. In the original sample the naïve hedge is the most effective model in 7, 7, 7 and 6 of 12 tail-risk scenarios for WTI crude oil, GBP/USD, the S\&P 500 and gold, and no estimated model beats it at the 10\% significance level in any of 240 tests. The same holds from July 2023 to November 2026 and for Bitcoin and natural gas. A paired version of the test, which has more power than the one used in the paper, strengthens the conclusion: the naïve hedge is significantly better than the estimated model in 148 of the 240 original-sample comparisons. The evidence points to estimation error as the reason. Estimated hedge ratios move widely from week to week, they win in-sample and lose out-of-sample, and the naïve hedge has its largest advantage in natural gas, where the spot–futures relation is least stable.
+
+\section*{1. Introduction}
+
+A firm that holds oil, a foreign currency or an equity portfolio can remove most of its price risk by selling futures. The first decision is how many futures to sell for each unit held: the hedge ratio. The textbook answer is the ratio that minimizes the variance of the hedged position, estimated by regressing spot returns on futures returns (Ederington, 1979). Risk managers and regulators, however, care most about large losses. The Basel market risk framework measures capital with expected shortfall, a tail measure (Basel Committee on Banking Supervision, 2019), and a large literature has proposed hedge ratios that minimize Value-at-Risk (VaR) or Conditional Value-at-Risk (CVaR) directly (Harris \& Shen, 2006; Cao et al., 2010).
+
+Cao and Conlon (2025) challenge the value of that effort. Using weekly data for WTI crude oil, GBP/USD, the S\&P 500 and gold from January 1990 to June 2023, they compare six ways of setting the hedge ratio and find that none of the five estimated models reduces tail risk significantly more than the simplest rule, one unit of futures per unit of spot. The claim is uncomfortable for quantitative risk management. If it is right, estimating a hedge ratio adds cost and model risk without adding protection. It is also debatable: the result rests on one sample, four mature markets and one set of data-handling choices that the paper does not fully describe.
+
+The question is timely for two reasons. First, the paper's sample ends in June 2023. Since then markets have been through the yen carry-trade unwind of August 2024 (Aquilina et al., 2024) and the tariff sell-off of April 2025 (International Monetary Fund, 2025). Second, two markets that are now widely hedged with futures were not in the study. Bitcoin futures have traded on the CME since December 2017, and U.S. spot Bitcoin exchange-traded products were approved in January 2024 (Gensler, 2024). Natural gas is exposed to weather shocks such as Winter Storm Uri in February 2021 (FERC \& NERC, 2021). Both have fatter tails than the paper's four markets and a looser link between spot and futures prices, which is where a fixed one-for-one hedge should be most at risk.
+
+This report asks whether the naïve hedge remains difficult to beat in reducing tail risk through 2026, and whether that conclusion extends to Bitcoin and natural gas. We rebuild the study from raw data with our own code, reproduce the published results, and then extend them in time and across markets. Our thesis is that the naïve hedge is hard to beat because estimated hedge ratios are noisy, not because the estimated models are badly designed, and that this holds with more force, not less, where the spot–futures relation is unstable.
+
+Section 2 reviews the literature and states the hypotheses. Sections 3 and 4 describe the data and the method. Section 5 reports the results, Section 6 discusses alternative interpretations and limitations, and Section 7 concludes.
+
+\section*{2. Background and Hypotheses}
+
+\subsection*{2.1 Related literature}
+
+Ederington (1979) defined hedging effectiveness as the share of spot variance removed by the hedge and showed that the variance-minimizing ratio is the slope of a regression of spot on futures returns. Later work replaced variance with measures of downside risk. Harris and Shen (2006) choose the ratio that minimizes historical-simulation VaR or CVaR. Cao et al. (2010) use a Cornish–Fisher expansion, which needs less data because it uses the skewness and kurtosis of the whole distribution, not only its tail. Cotter and Hanly (2006) and Conlon and Cotter (2013) evaluate hedges by the reduction in VaR, CVaR and semivariance.
+
+A second literature doubts that estimated ratios help out of sample. DeMiguel et al. (2009) show that an equally weighted portfolio is rarely beaten by optimized portfolios because the inputs to the optimization are estimated with error. Wang et al. (2015) carry the argument to futures hedging: across 24 markets, no minimum-variance model consistently beats the naïve hedge out of sample. Cao and Conlon (2025) extend this to tail risk. In their Table 5 the naïve hedge is the most effective model in 9 of 12 scenarios for WTI, 7 for GBP/USD, 4 for the S\&P 500 and 6 for gold, and most p-values for the alternatives are above 0.5. In-sample, when the ratio is estimated on the same weeks it is evaluated on, the naïve hedge is best in only 1 of 12 scenarios for WTI and 3 for each of the others.
+
+\subsection*{2.2 Hypotheses}
+
+\begin{quote}
+\textbf{H1 (Replication and persistence).} For WTI crude oil, GBP/USD, the S\&P 500 and gold, no estimated hedge-ratio model significantly and consistently outperforms the naïve hedge in reducing VaR, CVaR or semivariance, in the original sample (January 1990 to June 2023) or in the extension to November 2026.
+\end{quote}
+
+\begin{quote}
+\textbf{H2 (Generalization to new markets).} The same holds for Bitcoin (2017–2026) and natural gas (1999–2026), despite their fat tails and unstable basis.
+\end{quote}
+
+\subsection*{2.3 Argument and counterargument}
+
+The argument for both hypotheses is estimation error. A 52-week window holds about five observations in its worst 10\% and one in its worst 1\%, so a ratio fitted to the tail is fitted to a handful of weeks and will not carry over to the next week. The naïve ratio is not estimated and has no such error. If this is right, three things should be visible in the data: estimated ratios should vary widely over time, estimated models should win when evaluated in-sample, and their advantage should disappear out of sample.
+
+The counterargument is basis risk. A one-for-one hedge is optimal only if spot and futures prices move together one for one. Where they do not, an estimated ratio can adapt and the naïve ratio cannot. In Cao and Conlon's own Table 13 the OLS hedge removes slightly more variance than the naïve hedge when basis risk is above its median in three of the four markets. Bitcoin and natural gas are therefore the hard test: if the naïve hedge fails anywhere, it should fail there. Section 5.5 examines this directly.
+
+\section*{3. Data}
+
+Table 1 lists the six markets. Futures prices and contract calendars are from Bloomberg; spot prices are from Bloomberg and from the Federal Reserve Bank of St. Louis (FRED). All series are daily and were sampled weekly on Wednesdays, as in the paper. Returns are log price changes. The Chicago Fed National Activity Index (CFNAI) from FRED identifies periods of below-average growth.
+
+\begin{table}[H]
+\caption{Markets, sources and samples}
+\centering
+\fontsize{9}{11.2}\selectfont\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{\dimexpr 0.1500\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.3500\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.2071\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.1929\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.1000\linewidth-2\tabcolsep\relax}@{}}
+\toprule
+\textbf{Market} & \textbf{Spot price} & \textbf{Futures} & \textbf{Sample} & \textbf{Weekly returns} \\
+\midrule
+WTI crude oil & Cushing spot (FRED DCOILWTICO) & NYMEX CL & Jan 1990 – Nov 2026 & 1,885 \\
+GBP/USD & Bloomberg GBPUSD & CME BP & Jan 1990 – Nov 2026 & 1,922 \\
+S\&P 500 & Bloomberg SPX & CME SP to Sep 2021, then ES & Jan 1990 – Nov 2026 & 1,922 \\
+Gold & Bloomberg XAU & COMEX GC & Jan 1990 – Nov 2026 & 1,920 \\
+Bitcoin & CME CF reference rate (BRR) & CME BTC & Dec 2017 – Nov 2026 & 463 \\
+Natural gas & Henry Hub: Bloomberg to Mar 2007, FRED DHHNGSP after & NYMEX NG & Jan 1999 – Nov 2026 & 1,449 \\
+\bottomrule
+\end{tabular}
+\par\vspace{3pt}\begin{minipage}{\linewidth}\footnotesize\raggedright \textit{Note.} Weekly returns are counts in our data setting (Section 3.1). The first 52 weeks of each market are used only to estimate the first hedge ratio.\end{minipage}
+\end{table}
+
+\subsection*{3.1 Reconstructing the paper's data conventions}
+
+The paper describes its data in one paragraph: weekly Wednesday prices, 1,728 observations, and futures that are “nearest to maturity, with a rollover to the subsequent contract occurring on the first day of the contract month.” It does not say how holidays are handled or how returns are computed in a week when the contract changes. We inferred both from its summary statistics.
+
+\textit{Calendar.} There are 1,748 Wednesdays between January 3, 1990 and June 28, 2023. On 20 of them at least one of the markets was closed. Keeping only Wednesdays on which every market traded leaves exactly 1,728 dates, the paper's count. The paper therefore appears to drop holiday Wednesdays without replacement.
+
+\textit{Roll weeks.} Futures returns in the paper match a spliced series: in a roll week the new contract's price is compared with the old contract's price a week earlier. For WTI the stated roll rule cannot operate, because the contract stops trading about a week before its contract month begins, and the series reduces to the front contract held to expiry. Table 2 compares our reconstruction with the paper's Table 2. Futures statistics match closely in all four markets, and spot statistics match for WTI and the S\&P 500.
+
+\begin{table}[H]
+\caption{Weekly returns, January 1990 to June 2023: our reconstruction / Cao and Conlon (2025), Table 2}
+\centering
+\fontsize{9}{11.2}\selectfont\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{\dimexpr 0.2143\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.1500\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.1571\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.1500\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.1714\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.1571\linewidth-2\tabcolsep\relax}@{}}
+\toprule
+\textbf{Series} & \textbf{Std. dev.} & \textbf{Minimum} & \textbf{Maximum} & \textbf{Excess kurtosis} & \textbf{5\% CVaR} \\
+\midrule
+WTI, spot & 0.056 / 0.056 & −0.481 / −0.481 & 0.462 / 0.462 & 9.335 / 9.778 & −0.132 / −0.129 \\
+WTI, futures & 0.056 / 0.055 & −0.482 / −0.482 & 0.466 / 0.466 & 10.253 / 11.043 & −0.129 / −0.126 \\
+GBP/USD, spot & 0.013 / 0.014 & −0.100 / −0.091 & 0.050 / 0.055 & 6.148 / 4.854 & −0.032 / −0.033 \\
+GBP/USD, futures & 0.014 / 0.014 & −0.102 / −0.103 & 0.050 / 0.050 & 6.129 / 6.134 & −0.033 / −0.033 \\
+S\&P 500, spot & 0.023 / 0.023 & −0.165 / −0.165 & 0.107 / 0.107 & 5.268 / 5.143 & −0.057 / −0.056 \\
+S\&P 500, futures & 0.023 / 0.023 & −0.175 / −0.175 & 0.111 / 0.111 & 5.306 / 5.166 & −0.058 / −0.057 \\
+Gold, spot & 0.022 / 0.022 & −0.148 / −0.124 & 0.138 / 0.137 & 5.274 / 4.101 & −0.051 / −0.050 \\
+Gold, futures & 0.022 / 0.022 & −0.132 / −0.131 & 0.129 / 0.129 & 4.388 / 4.473 & −0.052 / −0.051 \\
+\bottomrule
+\end{tabular}
+\par\vspace{3pt}\begin{minipage}{\linewidth}\footnotesize\raggedright \textit{Note.} Each cell shows our value, then the paper's. Futures are spliced under the paper's roll rule.\end{minipage}
+\end{table}
+
+Two differences remain, and both come from the spot source. The paper uses the WM/Reuters rate for GBP/USD and the London bullion price for gold. We do not have access to either and use Bloomberg's closing quotes, which are taken later in the day and closer to the time the futures settle. Our spot and futures returns are therefore more closely aligned than the paper's, and our hedging effectiveness for these two markets is higher (Section 5.1). For WTI, Bloomberg's spot series at NYU begins in 2017, so we use the Energy Information Administration's Cushing price from FRED. It has no price on some Wednesdays; on those weeks we read both spot and futures on the nearest earlier day so that the two legs always share a date.
+
+\subsection*{3.2 Two data settings}
+
+Spliced returns reproduce the paper, but they include a price gap in roll weeks that no hedger experiences. A hedger who rolls from one contract to the next earns the return on each contract while holding it. We therefore keep two settings. The \textit{paper setting} (strict Wednesdays, spliced returns) is used to replicate the original sample. The \textit{same-contract setting} computes every futures return on a single contract and, when a Wednesday is missing, moves the observation for both legs to Tuesday or Monday. It is used for the extension to 2026 and for Bitcoin and natural gas, and as a robustness check on the replication. The choice matters most for natural gas, where the next contract is on average 2.1\% more expensive than the expiring one at the roll and the gap has been as large as 32\%; a spliced series would record these gaps as hedging losses.
+
+For natural gas we combine two spot sources. FRED's Henry Hub series is sparse before 2007, and Bloomberg's series is dated one trading day late between January 2020 and mid-March 2021. We confirmed the second problem with three tests on the raw files: in that window Bloomberg has no Monday prices, its prices match FRED's previous-day prices, and its daily changes correlate with the previous day's futures change. We use Bloomberg before April 2007 and FRED from then on, and every weekly return uses one source at both ends.
+
+\section*{4. Methodology}
+
+A hedger who is long one unit of spot and short \textit{b} units of futures earns \textit{y} = \textit{s} − \textit{b}·\textit{f} in a week, where \textit{s} and \textit{f} are the spot and futures returns and \textit{b} is set at the end of the previous week. Downside risk is the lower tail of \textit{y}. Upside risk, the concern of a hedger who is short spot and long futures, is its upper tail. Each week, each model in Table 3 chooses \textit{b} using only the previous 52 weeks.
+
+\begin{table}[H]
+\caption{The six hedge-ratio models}
+\centering
+\fontsize{9}{11.2}\selectfont\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{\dimexpr 0.2692\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.2231\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.5077\linewidth-2\tabcolsep\relax}@{}}
+\toprule
+\textbf{Model} & \textbf{Objective} & \textbf{How the ratio is obtained} \\
+\midrule
+Naïve & b = 1 & Nothing is estimated. \\
+OLS & Minimum variance & Slope of spot on futures returns (Ederington, 1979). \\
+Historical simulation (HS) & Minimum VaR or CVaR & Empirical tail of the 52 hedged returns (Harris \& Shen, 2006). \\
+Cornish–Fisher (CFE) & Minimum VaR or CVaR & Normal quantile adjusted for skewness and kurtosis (Cao et al., 2010). \\
+Copula & Minimum VaR or CVaR & Clayton copula with empirical marginals; 10,000 simulated weeks per window. \\
+Semivariance & Minimum semivariance & Mean squared loss below zero. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The HS, CFE and copula models are estimated separately for VaR and CVaR at the 10\%, 5\% and 1\% levels, for downside and upside risk, which gives 12 scenarios per market. The risk-minimizing ratio is found by a grid search from 0 to 2 in steps of 0.01. Hedging effectiveness is the share of risk removed, HE = 1 − Risk(hedged) / Risk(unhedged), measured over all out-of-sample weeks with historical-simulation VaR and CVaR, and also with variance and semivariance (Cotter \& Hanly, 2006).
+
+To test whether an estimated model beats the naïve hedge we follow the paper and use the test of Wilcox et al. (2014): the relevant quantile of each hedged-return series is estimated with the Harrell and Davis (1982) estimator, and a percentile bootstrap gives a one-sided p-value for the hypothesis that the model has lower tail risk. A small p-value favors the model; a p-value above 0.5 means the naïve hedge had the lower tail risk in the sample. The test resamples the two series independently. That is conservative here, because the two series come from the same weeks and are highly correlated. We therefore add a \textit{paired} version that resamples whole weeks. It has more power to detect a difference in either direction.
+
+Three further analyses address the reason for the result: an in-sample run in which each week's ratio is estimated on the 52 weeks ending in that week; splits of the evaluation weeks by basis volatility and by the sign of the CFNAI; and the opportunity cost of the naïve hedge in mean–variance utility, with risk aversion of 6 and a transaction cost of 0.03\% of turnover, as in the paper. All code is in Python, is covered by automated tests, and is in the project repository (Appendix B).
+
+\section*{5. Results}
+
+\subsection*{5.1 Replication, 1990 to June 2023 (H1)}
+
+Table 4 compares the tail-risk effectiveness of the naïve hedge in our data with the paper's Table 5. For WTI and the S\&P 500 the two agree closely: the mean absolute difference across the 12 scenarios is 0.017 and 0.005. For GBP/USD and gold our hedge is more effective than the paper's, by 0.15 and 0.04 on average. This is the spot-source difference described in Section 3.1, and it appears in variance terms as well: our OLS hedge removes 98\% of GBP/USD variance against 90\% in the paper. The levels differ, but the question is the ranking of the models, which uses the same data for every model.
+
+\begin{table}[H]
+\caption{Tail-risk hedging effectiveness of the naïve hedge, 1990 to June 2023: this study and Cao and Conlon (2025)}
+\centering
+\fontsize{7.5}{9.4}\selectfont\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{\dimexpr 0.1534\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0706\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0706\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0706\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0706\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0706\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0706\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0706\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0706\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0706\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0706\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0706\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0706\linewidth-2\tabcolsep\relax}@{}}
+\toprule
+ & \textbf{VaR 10\%} & \textbf{VaR 5\%} & \textbf{VaR 1\%} & \textbf{CVaR 10\%} & \textbf{CVaR 5\%} & \textbf{CVaR 1\%} & \textbf{VaR 90\%} & \textbf{VaR 95\%} & \textbf{VaR 99\%} & \textbf{CVaR 90\%} & \textbf{CVaR 95\%} & \textbf{CVaR 99\%} \\
+\midrule
+WTI: ours & 0.873 & 0.824 & 0.669 & 0.760 & 0.707 & 0.625 & 0.862 & 0.811 & 0.612 & 0.737 & 0.677 & 0.571 \\
+WTI: paper & 0.872 & 0.831 & 0.667 & 0.767 & 0.719 & 0.658 & 0.865 & 0.807 & 0.653 & 0.758 & 0.706 & 0.614 \\
+GBP/USD: ours & 0.871 & 0.865 & 0.869 & 0.871 & 0.873 & 0.887 & 0.862 & 0.842 & 0.768 & 0.809 & 0.784 & 0.731 \\
+GBP/USD: paper & 0.713 & 0.694 & 0.726 & 0.708 & 0.706 & 0.724 & 0.695 & 0.663 & 0.566 & 0.685 & 0.664 & 0.670 \\
+S\&P 500: ours & 0.896 & 0.882 & 0.848 & 0.875 & 0.864 & 0.866 & 0.880 & 0.882 & 0.894 & 0.888 & 0.890 & 0.903 \\
+S\&P 500: paper & 0.893 & 0.880 & 0.858 & 0.879 & 0.871 & 0.878 & 0.881 & 0.880 & 0.888 & 0.896 & 0.891 & 0.897 \\
+Gold: ours & 0.745 & 0.741 & 0.747 & 0.733 & 0.728 & 0.720 & 0.812 & 0.775 & 0.754 & 0.762 & 0.741 & 0.693 \\
+Gold: paper & 0.696 & 0.696 & 0.673 & 0.693 & 0.691 & 0.704 & 0.737 & 0.726 & 0.680 & 0.730 & 0.718 & 0.700 \\
+\bottomrule
+\end{tabular}
+\par\vspace{3pt}\begin{minipage}{\linewidth}\footnotesize\raggedright \textit{Note.} Columns 1–6 are downside risk and columns 7–12 upside risk. Paper setting, out-of-sample, 52-week window.\end{minipage}
+\end{table}
+
+\begin{table}[H]
+\caption{Scorecard: scenarios won by each model and tests against the naïve hedge}
+\centering
+\fontsize{8}{10.0}\selectfont\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{\dimexpr 0.1308\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0800\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0769\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0646\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0585\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0646\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0923\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0585\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0846\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0769\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.1046\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.1077\linewidth-2\tabcolsep\relax}@{}}
+\toprule
+\textbf{Market} & \textbf{Weeks} & \textbf{Naïve} & \textbf{OLS} & \textbf{HS} & \textbf{CFE} & \textbf{Copula} & \textbf{SV} & \textbf{p < 0.10} & \textbf{p > 0.5} & \textbf{Paired p < 0.05} & \textbf{Paired p > 0.95} \\
+\midrule
+\multicolumn{12}{@{}l}{\textbf{\textit{A. Replication: January 1990 to June 2023, paper setting}}} \\
+WTI & 1,656 & 7 & 4 & 0 & 1 & 0 & 0 & 0 & 95\% & 0 & 42 \\
+GBP/USD & 1,675 & 7 & 4 & 0 & 0 & 0 & 1 & 0 & 93\% & 0 & 43 \\
+S\&P 500 & 1,675 & 7 & 5 & 0 & 0 & 0 & 0 & 0 & 80\% & 0 & 29 \\
+Gold & 1,675 & 6 & 6 & 0 & 0 & 0 & 0 & 0 & 85\% & 0 & 34 \\
+\addlinespace[3pt]\multicolumn{12}{@{}l}{\textbf{\textit{B. Extension: July 2023 to November 2026, same-contract setting}}} \\
+WTI & 175 & 8 & 0 & 1 & 1 & 0 & 2 & 0 & 82\% & 0 & 24 \\
+GBP/USD & 175 & 5 & 1 & 3 & 1 & 0 & 2 & 0 & 72\% & 0 & 12 \\
+S\&P 500 & 175 & 0 & 3 & 2 & 4 & 1 & 2 & 0 & 58\% & 3 & 10 \\
+Gold & 175 & 7 & 2 & 2 & 0 & 0 & 1 & 0 & 92\% & 0 & 28 \\
+\addlinespace[3pt]\multicolumn{12}{@{}l}{\textbf{\textit{C. Full sample to November 2026, same-contract setting}}} \\
+WTI & 1,833 & 10 & 2 & 0 & 0 & 0 & 0 & 0 & 97\% & 0 & 48 \\
+GBP/USD & 1,870 & 10 & 1 & 0 & 0 & 0 & 1 & 0 & 100\% & 0 & 49 \\
+S\&P 500 & 1,870 & 4 & 8 & 0 & 0 & 0 & 0 & 0 & 87\% & 0 & 26 \\
+Gold & 1,868 & 9 & 3 & 0 & 0 & 0 & 0 & 0 & 90\% & 0 & 36 \\
+\addlinespace[3pt]\multicolumn{12}{@{}l}{\textbf{\textit{D. New markets, full sample, same-contract setting}}} \\
+Bitcoin & 411 & 5 & 1 & 2 & 0 & 0 & 4 & 0 & 78\% & 0 & 25 \\
+Natural gas & 1,397 & 8 & 0 & 1 & 2 & 0 & 1 & 0 & 97\% & 0 & 40 \\
+\bottomrule
+\end{tabular}
+\par\vspace{3pt}\begin{minipage}{\linewidth}\footnotesize\raggedright \textit{Note.} Columns Naïve to SV count the scenarios (of 12) in which the model has the highest tail-risk effectiveness. The last four columns count the 60 tests of an estimated model against the naïve hedge (5 models × 12 scenarios): the Wilcox et al. (2014) test with p below 0.10 (model better), the share with p above 0.5, and the paired test with p below 0.05 (model significantly better) and above 0.95 (naïve hedge significantly better). OLS and semivariance ratios do not depend on the risk measure, so some tests repeat.\end{minipage}
+\end{table}
+
+Panel A of Table 5 gives the main replication result. The naïve hedge is the most effective model in 7 of 12 scenarios for WTI, 7 for GBP/USD, 7 for the S\&P 500 and 6 for gold. The paper reports 9, 7, 4 and 6. As in the paper, OLS, the simplest estimated model, takes nearly all the remaining scenarios; the three tail-specific models (HS, CFE and copula) together win 1 of 48. When an estimated model is ahead, the margin is small: the largest gain over the naïve hedge in any scenario is 0.019.
+
+None of the 240 tests rejects in favor of an estimated model at the 10\% level, and between 80\% and 95\% of the p-values in each market are above 0.5, in line with the paper's statement that the majority are. The paired test goes further. It also finds no case in which an estimated model is better at the 5\% level, and in 148 of 240 comparisons it finds the naïve hedge significantly better at the 5\% level. The paper's conclusion that the alternatives are no better is, on this evidence, an understatement for most of them. H1 holds in the original sample. Appendix A gives the full tables.
+
+\subsection*{5.2 Persistence, July 2023 to November 2026 (H1)}
+
+Panel B evaluates the 175 weeks after the paper's sample ends, using same-contract returns. The naïve hedge is the best model in 8 of 12 scenarios for WTI, 5 for GBP/USD and 7 for gold, and no estimated model beats it at the 10\% level in any market under the paper's test. The S\&P 500 is the exception in the count, with 0 wins, but the exception has little content. Every model except the copula removes 99\% or more of the S\&P 500 downside tail in this period, so the ranking is decided in the third decimal place. The paired test flags 3 of 60 S\&P 500 comparisons at the 5\% level, all for the OLS and CFE hedges in the 10\% downside scenarios, and none in the other three markets; three in 240 is fewer than chance alone would produce. With 175 weeks the 1\% tail holds two observations, so we place more weight on Panel C, which adds the new weeks to the original sample: the naïve hedge wins 10, 10, 4 and 9 of 12 scenarios and is never significantly beaten. H1 holds through November 2026.
+
+\subsection*{5.3 Bitcoin and natural gas (H2)}
+
+\begin{table}[H]
+\caption{Bitcoin and natural gas: tail-risk hedging effectiveness by model, full sample}
+\centering
+\fontsize{9}{11.2}\selectfont\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{\dimexpr 0.2969\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.1172\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.1172\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.1172\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.1172\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.1172\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.1172\linewidth-2\tabcolsep\relax}@{}}
+\toprule
+ & \textbf{VaR 5\%} & \textbf{CVaR 5\%} & \textbf{CVaR 1\%} & \textbf{VaR 95\%} & \textbf{CVaR 95\%} & \textbf{CVaR 99\%} \\
+\midrule
+\multicolumn{7}{@{}l}{\textbf{\textit{Bitcoin (411 weeks)}}} \\
+Naïve & 0.605 & \textbf{0.658} & \textbf{0.730} & \textbf{0.721} & 0.687 & 0.632 \\
+OLS & \textbf{0.607} & 0.654 & 0.714 & 0.705 & 0.689 & 0.654 \\
+HS & 0.590 & 0.613 & 0.630 & 0.690 & 0.690 & 0.655 \\
+CFE & 0.595 & 0.592 & 0.651 & 0.694 & 0.681 & 0.622 \\
+Copula & 0.556 & 0.487 & 0.432 & 0.664 & 0.552 & 0.345 \\
+Semivariance & 0.591 & 0.639 & 0.700 & 0.701 & \textbf{0.699} & \textbf{0.686} \\
+\addlinespace[3pt]\multicolumn{7}{@{}l}{\textbf{\textit{Natural gas (1,397 weeks)}}} \\
+Naïve & \textbf{0.364} & \textbf{0.235} & 0.154 & \textbf{0.361} & \textbf{0.204} & \textbf{0.112} \\
+OLS & 0.293 & 0.161 & 0.102 & 0.273 & 0.148 & 0.079 \\
+HS & 0.320 & 0.200 & 0.084 & 0.313 & 0.133 & 0.064 \\
+CFE & 0.315 & 0.147 & 0.098 & 0.316 & 0.094 & 0.043 \\
+Copula & 0.322 & 0.205 & 0.097 & 0.285 & 0.121 & 0.057 \\
+Semivariance & 0.343 & 0.197 & \textbf{0.160} & 0.268 & 0.145 & 0.085 \\
+\bottomrule
+\end{tabular}
+\par\vspace{3pt}\begin{minipage}{\linewidth}\footnotesize\raggedright \textit{Note.} Same-contract setting, out-of-sample. The best model in each column is in bold. The first three columns are downside risk; the last three are upside risk.\end{minipage}
+\end{table}
+
+Table 6 and Panel D of Table 5 report the new markets. For Bitcoin the naïve hedge removes 60\% to 73\% of tail risk and is the best model in 5 of 12 scenarios. The semivariance and HS hedges win most of the others, mainly for upside risk. The sample is short: 411 weeks hold about four observations in the 1\% tail. No estimated model beats the naïve hedge at the 10\% level (the smallest p-value is 0.19), and the paired test finds none better at the 5\% level and the naïve hedge significantly better in 25 of 60 comparisons.
+
+Natural gas is the more demanding case. The futures hedge is far less effective than in any other market: the naïve hedge removes only 11\% to 44\% of tail risk and 32\% of variance. Henry Hub spot is a price for gas delivered the next day, and weather can move it far from the futures price, which covers delivery over the following month. In the week of Winter Storm Uri the spot price rose from \$3.76 to \$23.86 per million Btu and fell back to \$2.80 a week later, while the front futures contract rose by about 11\% and fell by about 8\%. No hedge ratio protects against that. This is exactly the setting in which the counterargument of Section 2.3 expects estimated ratios to help. They do not: the naïve hedge is the best model in 8 of 12 scenarios, the OLS hedge is less effective than the naïve hedge in 12 of 12, no test favors an estimated model, and the paired test finds the naïve hedge significantly better in 40 of 60 comparisons. H2 holds for both markets.
+
+\subsection*{5.4 Why: estimation error}
+
+The three signs of estimation error set out in Section 2.3 are all present. First, estimated ratios are unstable. Figure 1 plots the weekly ratios that minimize 5\% CVaR for WTI. The OLS and semivariance ratios stay close to one. The HS and CFE ratios, which are fitted to the tail of 52 observations, jump between about 0.5 and 1.5 as single extreme weeks enter and leave the window. Table 7 shows the same pattern in every market, and it is most pronounced in natural gas, where even the OLS ratio has a standard deviation of 0.43. The copula ratio is stable but biased: it averages about 0.76 for downside risk in our data, as in the paper, and so under-hedges systematically.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=5.6in]{../results/figures/fig1_hedge_ratios_wti.png}
+\caption{Hedge ratios that minimize 5\% CVaR (downside), WTI, 52-week rolling window, 1991 to June 2023. The dashed line is the naïve ratio of one.}
+\end{figure}
+
+\begin{table}[H]
+\caption{Hedge ratios that minimize 5\% CVaR (downside): mean and standard deviation over time}
+\centering
+\fontsize{9}{11.2}\selectfont\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{\dimexpr 0.2031\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.1594\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.1594\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.1594\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.1594\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.1594\linewidth-2\tabcolsep\relax}@{}}
+\toprule
+\textbf{Market} & \textbf{OLS} & \textbf{HS} & \textbf{CFE} & \textbf{Copula} & \textbf{Semivariance} \\
+\midrule
+WTI & 0.98 (0.05) & 0.97 (0.13) & 1.03 (0.23) & 0.81 (0.09) & 0.98 (0.06) \\
+GBP/USD & 0.98 (0.03) & 1.00 (0.06) & 0.99 (0.07) & 0.80 (0.09) & 0.99 (0.03) \\
+S\&P 500 & 0.98 (0.03) & 0.95 (0.08) & 0.97 (0.08) & 0.83 (0.08) & 0.96 (0.04) \\
+Gold & 0.94 (0.05) & 0.92 (0.11) & 0.93 (0.13) & 0.72 (0.11) & 0.93 (0.06) \\
+Bitcoin & 0.93 (0.05) & 0.95 (0.17) & 0.96 (0.16) & 0.64 (0.12) & 0.93 (0.10) \\
+Natural gas & 1.00 (0.43) & 0.97 (0.31) & 1.03 (0.48) & 0.75 (0.22) & 0.99 (0.29) \\
+\bottomrule
+\end{tabular}
+\par\vspace{3pt}\begin{minipage}{\linewidth}\footnotesize\raggedright \textit{Note.} Standard deviations in parentheses. Original sample for the first four markets (paper setting); full sample for Bitcoin and natural gas (same-contract setting). The naïve ratio is 1 with no variation.\end{minipage}
+\end{table}
+
+Second, the estimated models win in-sample. Figure 2 counts the scenarios in which the naïve hedge is the best model when each ratio is evaluated on the weeks it was estimated on, and when it is applied to the following week. In-sample the naïve hedge is best in 1, 1, 0 and 0 of 12 scenarios in the four original markets and in 1 and 1 for Bitcoin and natural gas; the paper reports 1, 3, 3 and 3. The models are therefore not badly specified. They do find ratios that would have reduced tail risk further. Third, that advantage does not survive the step to the next week: out-of-sample, the best estimated model loses on average 0.011 of effectiveness in the original markets relative to its in-sample result, which is the whole of its in-sample lead over the naïve hedge (0.011). In natural gas it loses 0.051, more than its in-sample lead of 0.034.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=5.8in]{../results/figures/fig2_naive_wins_in_vs_out.png}
+\caption{Scenarios (of 12) in which the naïve hedge has the highest tail-risk effectiveness, out-of-sample and in-sample.}
+\end{figure}
+
+\subsection*{5.5 Basis risk and the economic cycle}
+
+\begin{table}[H]
+\caption{Naïve and OLS hedges by basis volatility and by economic growth}
+\centering
+\fontsize{9}{11.2}\selectfont\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{\dimexpr 0.2000\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.2000\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.2000\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.2000\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.2000\linewidth-2\tabcolsep\relax}@{}}
+\toprule
+\textbf{Market} & \textbf{Naïve wins (of 12)} & \textbf{OLS wins (of 12)} & \textbf{5\% CVaR HE, naïve} & \textbf{5\% CVaR HE, OLS} \\
+\midrule
+\multicolumn{5}{@{}l}{\textbf{\textit{By basis volatility: below median / above median}}} \\
+WTI & 7 / 7 & 2 / 4 & 0.779 / 0.661 & 0.780 / 0.650 \\
+GBP/USD & 4 / 6 & 4 / 5 & 0.857 / 0.881 & 0.858 / 0.867 \\
+S\&P 500 & 4 / 8 & 5 / 3 & 0.911 / 0.835 & 0.909 / 0.841 \\
+Gold & 10 / 0 & 2 / 6 & 0.792 / 0.681 & 0.792 / 0.687 \\
+Bitcoin & 3 / 8 & 5 / 0 & 0.642 / 0.675 & 0.648 / 0.666 \\
+Natural gas & 4 / 8 & 3 / 0 & 0.287 / 0.210 & 0.300 / 0.127 \\
+\addlinespace[3pt]\multicolumn{5}{@{}l}{\textbf{\textit{By economic growth (CFNAI): below average / above average}}} \\
+WTI & 6 / 7 & 5 / 4 & 0.717 / 0.697 & 0.705 / 0.701 \\
+GBP/USD & 6 / 5 & 4 / 2 & 0.869 / 0.876 & 0.858 / 0.868 \\
+S\&P 500 & 7 / 3 & 3 / 5 & 0.886 / 0.837 & 0.884 / 0.845 \\
+Gold & 5 / 2 & 5 / 6 & 0.727 / 0.731 & 0.732 / 0.733 \\
+Bitcoin & 7 / 3 & 0 / 6 & 0.686 / 0.620 & 0.680 / 0.621 \\
+Natural gas & 10 / 9 & 0 / 0 & 0.229 / 0.242 & 0.156 / 0.167 \\
+\bottomrule
+\end{tabular}
+\par\vspace{3pt}\begin{minipage}{\linewidth}\footnotesize\raggedright \textit{Note.} Out-of-sample. Basis volatility is the standard deviation of the weekly difference between spot and futures returns over the previous 52 weeks, split at its median. Original sample for the first four markets; full sample for Bitcoin and natural gas.\end{minipage}
+\end{table}
+
+Table 8 tests the counterargument. If basis risk favored estimated ratios, the naïve hedge should win less often when the basis is volatile. Gold behaves this way: the naïve hedge wins 10 of 12 scenarios in calm-basis weeks and 0 in volatile-basis weeks, where OLS and the semivariance hedge are ahead, by at most 0.025 in effectiveness. This is the pattern in the paper's Table 13. It does not generalize. For the S\&P 500, Bitcoin and natural gas the naïve hedge wins more often when the basis is volatile (8, 8 and 8 of 12) than when it is calm (4, 3 and 4), and in volatile-basis weeks for natural gas the OLS hedge removes 13\% of the 5\% CVaR against 21\% for the naïve hedge. Our reading is that a volatile basis has two effects. It makes the best ratio differ from one, which helps estimated models, and it makes that ratio harder to estimate from 52 weeks, which hurts them. In the two new markets the second effect dominates.
+
+The split by economic growth gives a weaker pattern than the paper reports. The naïve hedge wins more scenarios in weeks of below-average growth for the S\&P 500 (7 against 3), gold (5 against 2) and Bitcoin (7 against 3). For WTI, GBP/USD and natural gas the counts in the two regimes are within one of each other. In no market does the naïve hedge do clearly worse when growth is weak, which is when tail protection is most needed.
+
+\subsection*{5.6 Stress episodes}
+
+\begin{table}[H]
+\caption{Worst weekly return of a long spot position in stress episodes: unhedged and hedged}
+\centering
+\fontsize{8.5}{10.6}\selectfont\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{\dimexpr 0.2538\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.1231\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0692\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.1077\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.1154\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.2077\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.1231\linewidth-2\tabcolsep\relax}@{}}
+\toprule
+\textbf{Episode} & \textbf{Market} & \textbf{Weeks} & \textbf{Unhedged} & \textbf{Naïve hedge} & \textbf{Best estimated model} & \textbf{Worst estimated model} \\
+\midrule
+COVID crash, Feb–Apr 2020 & WTI & 11 & −38.2\% & −15.7\% & −15.6\% (Copula) & −29.9\% \\
+COVID crash, Feb–Apr 2020 & S\&P 500 & 11 & −12.5\% & −0.6\% & −0.7\% (Semivariance) & −10.8\% \\
+COVID crash, Feb–Apr 2020 & Bitcoin & 11 & −32.1\% & −4.9\% & −3.3\% (HS) & −17.1\% \\
+Winter Storm Uri, Feb 2021 & Natural gas & 4 & −88.3\% & −87.3\% & −86.5\% (OLS) & −87.6\% \\
+FTX collapse, Nov 2022 & Bitcoin & 5 & −14.5\% & −8.4\% & −7.5\% (Copula) & −9.1\% \\
+Yen carry unwind, Aug 2024 & S\&P 500 & 3 & −5.8\% & 0.1\% & 0.0\% (CFE) & −1.4\% \\
+Yen carry unwind, Aug 2024 & Bitcoin & 3 & −15.2\% & −1.8\% & −1.0\% (HS) & −5.2\% \\
+Tariff sell–off, Apr 2025 & WTI & 4 & −13.2\% & −0.1\% & −0.1\% (OLS) & −1.8\% \\
+Tariff sell–off, Apr 2025 & S\&P 500 & 4 & −3.8\% & 0.1\% & 0.0\% (CFE) & −0.4\% \\
+Tariff sell–off, Apr 2025 & Natural gas & 4 & −15.3\% & −10.0\% & −4.4\% (CFE) & −10.9\% \\
+\bottomrule
+\end{tabular}
+\par\vspace{3pt}\begin{minipage}{\linewidth}\footnotesize\raggedright \textit{Note.} Out-of-sample hedge ratios that minimize 5\% CVaR. Simple weekly returns; a negative value is a loss. The best estimated model is known only after the fact.\end{minipage}
+\end{table}
+
+Table 9 looks at the weeks that matter most. In the market-wide episodes the naïve hedge removes nearly all of the loss in the S\&P 500 and most of it in WTI and Bitcoin. The best estimated model, which can be identified only afterwards, is more than two percentage points ahead in 1 of the 10 cases. The column for the worst estimated model shows the other side of estimation. After the first weeks of the COVID crash the Cornish–Fisher ratio for WTI and the S\&P 500 jumped to 2, the upper limit of our search grid, and the over-hedged position then lost heavily when prices rebounded. Two episodes show the limits of any futures hedge. In Winter Storm Uri the loss came from a spot price that the futures did not follow, and in the FTX collapse the naïve hedge removed less than half of the worst weekly loss in Bitcoin's reference rate. These are failures of the instrument, not of the hedge ratio: no estimated model did materially better.
+
+\subsection*{5.7 Cost of the naïve hedge}
+
+\begin{table}[H]
+\caption{Opportunity cost of the naïve hedge: utility of the naïve hedge minus utility of each estimated model}
+\centering
+\fontsize{9}{11.2}\selectfont\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{\dimexpr 0.1846\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.1231\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.1231\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.1231\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.1231\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.1615\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.1615\linewidth-2\tabcolsep\relax}@{}}
+\toprule
+\textbf{Market} & \textbf{OLS} & \textbf{HS} & \textbf{CFE} & \textbf{Copula} & \textbf{Semivariance} & \textbf{Smallest of 60} \\
+\midrule
+WTI & 0.0022 & 0.0047 & 0.0076 & 0.0099 & 0.0026 & 0.0022 \\
+GBP/USD & 0.0015 & 0.0026 & 0.0034 & 0.0076 & 0.0017 & 0.0015 \\
+S\&P 500 & 0.0012 & 0.0019 & 0.0028 & 0.0059 & 0.0015 & 0.0011 \\
+Gold & 0.0027 & 0.0047 & 0.0053 & 0.0105 & 0.0030 & 0.0027 \\
+Bitcoin & 0.0005 & 0.0013 & 0.0016 & 0.0054 & 0.0008 & 0.0005 \\
+Natural gas & 0.0135 & 0.0142 & 0.0183 & 0.0248 & 0.0117 & 0.0093 \\
+\bottomrule
+\end{tabular}
+\par\vspace{3pt}\begin{minipage}{\linewidth}\footnotesize\raggedright \textit{Note.} Mean–variance utility of weekly hedged returns with risk aversion 6, less transaction costs of 0.03\% of total turnover in the hedge ratio, as in the paper's equation 16. Average over the 12 scenarios. A positive value means the naïve hedge gives higher utility.\end{minipage}
+\end{table}
+
+A fixed ratio could still be costly if it gave up return or added variance in ordinary weeks. Table 10 follows the paper's calculation and reaches the paper's result: the utility of the naïve hedge is higher than that of every estimated model in all six markets and in every one of the 360 scenario comparisons, and for WTI our OLS figure of 0.002 equals the paper's 0.002. The result should be read with care, because it comes almost entirely from trading costs. The formula sets the cost of all turnover over the sample against a weekly mean and variance, which gives costs a large weight. Before costs, the difference between the naïve and OLS hedges is between −0.0004 and 0.0000 in five of the six markets, too small to matter in either direction. Natural gas is the exception: there the naïve hedge is ahead of every estimated model before costs as well, by 0.002 to 0.004. The defensible conclusion is that the naïve hedge costs nothing in utility terms, not that it adds much.
+
+\subsection*{5.8 Robustness}
+
+\textit{Data conventions.} Re-running the original sample with same-contract returns and the flexible calendar gives 9, 10, 5 and 7 wins for the naïve hedge and, again, no significant test in favor of an estimated model. The conclusion does not depend on how roll weeks are treated. The level of effectiveness can. Applied to the weeks after June 2023, the paper's spliced returns put the naïve hedge's 5\% CVaR effectiveness for the S\&P 500 at 0.75, against 1.00 with same-contract returns. With interest rates above 4\%, each quarterly roll adds about 1.0\% to the spliced futures series, and these roll weeks become the short hedger's largest recorded “losses” although no hedger bears them. Studies that splice futures prices will understate hedging effectiveness whenever the futures curve is steep.
+
+\textit{Natural gas spot source.} Using FRED alone, which restricts the evaluation to April 2008 onward (970 weeks), the naïve hedge wins 8 of 12 scenarios and no test favors an estimated model. \textit{Bitcoin spot source.} The CME reference rate is fixed in the London afternoon, several hours before the futures settle. With Bloomberg's closing Bitcoin price the naïve hedge's effectiveness rises to between 0.81 and 0.88, and it wins 6 of 12 scenarios with no significant test against it. The ranking is the same; the level depends on timing, as it does for GBP/USD and gold.
+
+\textit{AI-concentration weeks.} The proposal raised the possibility that the S\&P 500's recent tail risk, which is driven by a small number of AI-linked stocks, might behave differently. As a brief check we flagged the worst 10\% of weeks for the iShares Semiconductor ETF between July 2023 and November 2026 (18 weeks, with an average S\&P 500 return of −2.2\%). In those weeks the naïve hedge removed 99.9\% of the squared S\&P 500 return, against 99.7\% in other weeks, and no estimated model differed from it by more than 0.1 percentage points. Index concentration changes what drives the S\&P 500, but not how closely its futures track it.
+
+\section*{6. Discussion and Limitations}
+
+Three alternative readings of the evidence deserve attention. The first is that the tests simply lack power, so that “not significantly better” means little. The paper's test does lack power here, because it treats two highly correlated series as independent. The paired test removes that weakness, and it moves the evidence toward the naïve hedge, not away from it. The second is that the estimated models are poor models. The in-sample results rule this out for four of the five: they find better ratios when the answer is known. The copula model is the exception. It under-hedges by construction, in-sample and out-of-sample, and its failure is one of specification. The third is that a 52-week window is too short. We did not test longer windows, a restriction we accepted to narrow the project; the paper reports the same conclusion with 260 weeks. A longer window would reduce noise in the estimates but would also respond more slowly, and our stress-episode results suggest that slow-moving tail estimates are themselves a source of loss.
+
+The results should be read with four limitations in mind. Our spot series for GBP/USD and gold are not the paper's, so hedging-effectiveness levels for those markets are not comparable with the published ones. The post-2023 sample and the Bitcoin sample are short, and conclusions at the 1\% level rest on two to four observations. Hedging effectiveness for natural gas and Bitcoin depends on which spot price is hedged; a firm exposed to a monthly index price would see a different basis from one exposed to Henry Hub daily spot. Finally, we study futures only. Options and other non-linear hedges address tail risk directly and are outside the scope of this project.
+
+For a risk manager the practical implication is narrow but useful. Where a liquid futures contract exists on the asset being hedged, a one-for-one hedge is a sound default for tail risk, and the case for replacing it with an estimated ratio has to be made out of sample and net of trading costs. Effort is better spent on the basis itself: choosing the contract, matching the timing of the exposure, and recognizing, as in natural gas, when the instrument cannot remove the risk at any ratio.
+
+\section*{7. Conclusion}
+
+We set out to test whether the naïve hedge is still hard to beat. An independent replication from raw data reproduces Cao and Conlon's (2025) central result for 1990 to June 2023: the naïve hedge is the most effective model in more scenarios than any alternative, and no alternative is significantly better. The result persists through November 2026 and extends to Bitcoin and natural gas, which supports both of our hypotheses. A more powerful paired test shows that the naïve hedge is in most cases significantly better than the tail-specific models, not merely indistinguishable from them.
+
+The explanation is estimation error. Hedge ratios fitted to the tail of a one-year window are unstable, they succeed only on the data they were fitted to, and they cost more to maintain. The counterargument that an unstable basis should favor estimated ratios holds for gold and fails where it matters most: in natural gas, the market with the weakest spot–futures link in our study, the naïve hedge has its clearest advantage. The contribution of a hedge-ratio model is limited by how well its inputs can be estimated, and for tail risk at a weekly horizon that limit is reached quickly.
+
+\section*{References}
+
+{\small\setlength{\parskip}{2pt}\hangindent=0.3in\hangafter=1\noindent Aquilina, M., Lombardi, M., Schrimpf, A., \& Sushko, V. (2024). \textit{The market turbulence and carry trade unwind of August 2024} (BIS Bulletin No. 90). Bank for International Settlements.\par}
+
+{\small\setlength{\parskip}{2pt}\hangindent=0.3in\hangafter=1\noindent Basel Committee on Banking Supervision. (2019). \textit{Minimum capital requirements for market risk}. Bank for International Settlements.\par}
+
+{\small\setlength{\parskip}{2pt}\hangindent=0.3in\hangafter=1\noindent Bloomberg L.P. (2026). \textit{Bloomberg Terminal} [Spot and futures price data]. Accessed through New York University.\par}
+
+{\small\setlength{\parskip}{2pt}\hangindent=0.3in\hangafter=1\noindent Cao, M., \& Conlon, T. (2025). Tail risk hedging: The superiority of the naïve hedging strategy. \textit{Journal of Futures Markets, 45}(8), 977–1005.\par}
+
+{\small\setlength{\parskip}{2pt}\hangindent=0.3in\hangafter=1\noindent Cao, Z., Harris, R. D. F., \& Shen, J. (2010). Hedging and value at risk: A semi-parametric approach. \textit{Journal of Futures Markets, 30}(8), 780–794.\par}
+
+{\small\setlength{\parskip}{2pt}\hangindent=0.3in\hangafter=1\noindent Conlon, T., \& Cotter, J. (2013). Downside risk and the energy hedger’s horizon. \textit{Energy Economics, 36}, 371–379.\par}
+
+{\small\setlength{\parskip}{2pt}\hangindent=0.3in\hangafter=1\noindent Cotter, J., \& Hanly, J. (2006). Reevaluating hedging performance. \textit{Journal of Futures Markets, 26}(7), 677–702.\par}
+
+{\small\setlength{\parskip}{2pt}\hangindent=0.3in\hangafter=1\noindent DeMiguel, V., Garlappi, L., \& Uppal, R. (2009). Optimal versus naive diversification: How inefficient is the 1/N portfolio strategy? \textit{Review of Financial Studies, 22}(5), 1915–1953.\par}
+
+{\small\setlength{\parskip}{2pt}\hangindent=0.3in\hangafter=1\noindent Ederington, L. H. (1979). The hedging performance of the new futures markets. \textit{Journal of Finance, 34}(1), 157–170.\par}
+
+{\small\setlength{\parskip}{2pt}\hangindent=0.3in\hangafter=1\noindent Federal Energy Regulatory Commission (FERC) \& North American Electric Reliability Corporation (NERC). (2021). \textit{The February 2021 cold weather outages in Texas and the South Central United States} [Staff report].\par}
+
+{\small\setlength{\parskip}{2pt}\hangindent=0.3in\hangafter=1\noindent Federal Reserve Bank of St. Louis. (2026). \textit{Federal Reserve Economic Data (FRED)}: series CFNAI, DHHNGSP and DCOILWTICO [Data sets].\par}
+
+{\small\setlength{\parskip}{2pt}\hangindent=0.3in\hangafter=1\noindent Gensler, G. (2024, January 10). \textit{Statement on the approval of spot bitcoin exchange-traded products}. U.S. Securities and Exchange Commission.\par}
+
+{\small\setlength{\parskip}{2pt}\hangindent=0.3in\hangafter=1\noindent Harrell, F. E., \& Davis, C. E. (1982). A new distribution-free quantile estimator. \textit{Biometrika, 69}(3), 635–640.\par}
+
+{\small\setlength{\parskip}{2pt}\hangindent=0.3in\hangafter=1\noindent Harris, R. D. F., \& Shen, J. (2006). Hedging and value at risk. \textit{Journal of Futures Markets, 26}(4), 369–390.\par}
+
+{\small\setlength{\parskip}{2pt}\hangindent=0.3in\hangafter=1\noindent International Monetary Fund. (2025). \textit{Global financial stability report: Enhancing resilience amid uncertainty} (April 2025).\par}
+
+{\small\setlength{\parskip}{2pt}\hangindent=0.3in\hangafter=1\noindent Wang, Y., Wu, C., \& Yang, L. (2015). Hedging with futures: Does anything beat the naïve hedging strategy? \textit{Management Science, 61}(12), 2870–2889.\par}
+
+{\small\setlength{\parskip}{2pt}\hangindent=0.3in\hangafter=1\noindent Wilcox, R. R., Erceg-Hurn, D. M., Clark, F., \& Carlson, M. (2014). Comparing two independent groups via the lower and upper quantiles. \textit{Journal of Statistical Computation and Simulation, 84}(7), 1543–1551.\par}
+
+\clearpage
+
+\section*{Appendix A. Full Out-of-Sample Results}
+
+{\small Each table reports tail-risk hedging effectiveness for the 12 scenarios, with the p-value of the Wilcox et al. (2014) test against the naïve hedge in parentheses. The best model in each column is in bold. Columns 1–6 are downside risk and columns 7–12 upside risk.\par}
+
+\begin{table}[H]
+\caption{WTI: hedging effectiveness and p-values, January 1990 to June 2023, paper setting (1,656 weeks)}
+\centering
+\fontsize{7.5}{9.4}\selectfont\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{\dimexpr 0.1508\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}@{}}
+\toprule
+ & \textbf{VaR 10\%} & \textbf{VaR 5\%} & \textbf{VaR 1\%} & \textbf{CVaR 10\%} & \textbf{CVaR 5\%} & \textbf{CVaR 1\%} & \textbf{VaR 90\%} & \textbf{VaR 95\%} & \textbf{VaR 99\%} & \textbf{CVaR 90\%} & \textbf{CVaR 95\%} & \textbf{CVaR 99\%} \\
+\midrule
+Naïve & 0.873 & 0.824 & \textbf{0.669} & \textbf{0.760} & \textbf{0.707} & \textbf{0.625} & \textbf{0.862} & \textbf{0.811} & 0.612 & \textbf{0.737} & 0.677 & 0.571 \\
+OLS & 0.866 & \textbf{0.824} & 0.651 & 0.752 & 0.701 & 0.619 & 0.848 & 0.786 & \textbf{0.632} & 0.729 & \textbf{0.678} & \textbf{0.586} \\
+ & (0.78) & (0.55) & (0.56) & (0.78) & (0.55) & (0.56) & (0.89) & (0.75) & (0.42) & (0.89) & (0.75) & (0.42) \\
+HS & 0.865 & 0.780 & 0.599 & 0.751 & 0.683 & 0.562 & 0.853 & 0.778 & 0.590 & 0.730 & 0.647 & 0.453 \\
+ & (0.80) & (0.94) & (0.68) & (0.88) & (0.98) & (0.95) & (0.84) & (0.90) & (0.61) & (0.98) & (0.99) & (0.97) \\
+CFE & \textbf{0.877} & 0.822 & 0.567 & 0.703 & 0.618 & 0.502 & 0.859 & 0.796 & 0.493 & 0.652 & 0.552 & 0.352 \\
+ & (0.43) & (0.65) & (0.82) & (1.00) & (1.00) & (0.93) & (0.62) & (0.66) & (0.90) & (1.00) & (1.00) & (0.96) \\
+Copula & 0.834 & 0.774 & 0.605 & 0.712 & 0.659 & 0.571 & 0.819 & 0.722 & 0.432 & 0.661 & 0.577 & 0.411 \\
+ & (1.00) & (0.98) & (0.80) & (1.00) & (1.00) & (0.87) & (1.00) & (1.00) & (0.99) & (1.00) & (1.00) & (1.00) \\
+Semivariance & 0.869 & 0.823 & 0.667 & 0.752 & 0.701 & 0.621 & 0.831 & 0.780 & 0.607 & 0.710 & 0.654 & 0.541 \\
+ & (0.75) & (0.57) & (0.53) & (0.75) & (0.57) & (0.53) & (0.99) & (0.85) & (0.60) & (0.99) & (0.85) & (0.60) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\caption{GBP/USD: hedging effectiveness and p-values, January 1990 to June 2023, paper setting (1,675 weeks)}
+\centering
+\fontsize{7.5}{9.4}\selectfont\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{\dimexpr 0.1508\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}@{}}
+\toprule
+ & \textbf{VaR 10\%} & \textbf{VaR 5\%} & \textbf{VaR 1\%} & \textbf{CVaR 10\%} & \textbf{CVaR 5\%} & \textbf{CVaR 1\%} & \textbf{VaR 90\%} & \textbf{VaR 95\%} & \textbf{VaR 99\%} & \textbf{CVaR 90\%} & \textbf{CVaR 95\%} & \textbf{CVaR 99\%} \\
+\midrule
+Naïve & \textbf{0.871} & \textbf{0.865} & \textbf{0.869} & \textbf{0.871} & \textbf{0.873} & \textbf{0.887} & 0.862 & \textbf{0.842} & 0.768 & 0.809 & 0.784 & 0.731 \\
+OLS & 0.867 & 0.860 & 0.855 & 0.864 & 0.864 & 0.878 & \textbf{0.867} & 0.828 & \textbf{0.768} & \textbf{0.810} & \textbf{0.787} & 0.746 \\
+ & (0.73) & (0.72) & (0.78) & (0.73) & (0.72) & (0.78) & (0.42) & (0.67) & (0.50) & (0.42) & (0.67) & (0.50) \\
+HS & 0.864 & 0.857 & 0.857 & 0.867 & 0.862 & 0.833 & 0.852 & 0.806 & 0.730 & 0.801 & 0.771 & 0.676 \\
+ & (0.80) & (0.81) & (0.83) & (0.82) & (0.89) & (0.98) & (0.78) & (0.97) & (0.93) & (0.82) & (0.98) & (0.98) \\
+CFE & 0.865 & 0.860 & 0.845 & 0.861 & 0.854 & 0.851 & 0.862 & 0.821 & 0.732 & 0.797 & 0.754 & 0.628 \\
+ & (0.81) & (0.72) & (0.91) & (0.84) & (0.86) & (0.91) & (0.60) & (0.84) & (0.91) & (0.87) & (0.98) & (0.97) \\
+Copula & 0.846 & 0.786 & 0.711 & 0.777 & 0.742 & 0.684 & 0.844 & 0.784 & 0.597 & 0.762 & 0.692 & 0.442 \\
+ & (1.00) & (1.00) & (1.00) & (1.00) & (1.00) & (1.00) & (0.95) & (1.00) & (1.00) & (1.00) & (1.00) & (1.00) \\
+Semivariance & 0.867 & 0.862 & 0.866 & 0.868 & 0.870 & 0.886 & 0.855 & 0.826 & 0.759 & 0.806 & 0.786 & \textbf{0.750} \\
+ & (0.72) & (0.66) & (0.56) & (0.72) & (0.66) & (0.56) & (0.75) & (0.80) & (0.56) & (0.75) & (0.80) & (0.56) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\caption{S\&P 500: hedging effectiveness and p-values, January 1990 to June 2023, paper setting (1,675 weeks)}
+\centering
+\fontsize{7.5}{9.4}\selectfont\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{\dimexpr 0.1508\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}@{}}
+\toprule
+ & \textbf{VaR 10\%} & \textbf{VaR 5\%} & \textbf{VaR 1\%} & \textbf{CVaR 10\%} & \textbf{CVaR 5\%} & \textbf{CVaR 1\%} & \textbf{VaR 90\%} & \textbf{VaR 95\%} & \textbf{VaR 99\%} & \textbf{CVaR 90\%} & \textbf{CVaR 95\%} & \textbf{CVaR 99\%} \\
+\midrule
+Naïve & \textbf{0.896} & \textbf{0.882} & 0.848 & 0.875 & 0.864 & 0.866 & \textbf{0.880} & 0.882 & \textbf{0.894} & \textbf{0.888} & \textbf{0.890} & \textbf{0.903} \\
+OLS & 0.893 & 0.881 & \textbf{0.852} & \textbf{0.875} & \textbf{0.867} & \textbf{0.869} & 0.879 & \textbf{0.885} & 0.888 & 0.887 & 0.889 & 0.899 \\
+ & (0.67) & (0.57) & (0.43) & (0.67) & (0.57) & (0.43) & (0.55) & (0.44) & (0.69) & (0.55) & (0.44) & (0.69) \\
+HS & 0.896 & 0.868 & 0.820 & 0.871 & 0.853 & 0.844 & 0.876 & 0.880 & 0.888 & 0.885 & 0.886 & 0.883 \\
+ & (0.65) & (0.92) & (0.95) & (0.86) & (0.95) & (0.96) & (0.68) & (0.63) & (0.86) & (0.47) & (0.72) & (0.97) \\
+CFE & 0.888 & 0.872 & 0.815 & 0.866 & 0.828 & 0.746 & 0.880 & 0.884 & 0.880 & 0.883 & 0.852 & 0.772 \\
+ & (0.82) & (0.84) & (0.95) & (0.91) & (0.90) & (0.99) & (0.45) & (0.38) & (0.94) & (0.57) & (0.48) & (0.97) \\
+Copula & 0.879 & 0.832 & 0.796 & 0.833 & 0.812 & 0.795 & 0.872 & 0.841 & 0.676 & 0.838 & 0.786 & 0.649 \\
+ & (0.99) & (1.00) & (1.00) & (1.00) & (1.00) & (1.00) & (0.91) & (1.00) & (1.00) & (1.00) & (1.00) & (1.00) \\
+Semivariance & 0.889 & 0.876 & 0.852 & 0.872 & 0.864 & 0.868 & 0.879 & 0.882 & 0.889 & 0.886 & 0.888 & 0.896 \\
+ & (0.81) & (0.72) & (0.45) & (0.81) & (0.72) & (0.45) & (0.49) & (0.57) & (0.75) & (0.49) & (0.57) & (0.75) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\caption{Gold: hedging effectiveness and p-values, January 1990 to June 2023, paper setting (1,675 weeks)}
+\centering
+\fontsize{7.5}{9.4}\selectfont\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{\dimexpr 0.1508\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}@{}}
+\toprule
+ & \textbf{VaR 10\%} & \textbf{VaR 5\%} & \textbf{VaR 1\%} & \textbf{CVaR 10\%} & \textbf{CVaR 5\%} & \textbf{CVaR 1\%} & \textbf{VaR 90\%} & \textbf{VaR 95\%} & \textbf{VaR 99\%} & \textbf{CVaR 90\%} & \textbf{CVaR 95\%} & \textbf{CVaR 99\%} \\
+\midrule
+Naïve & \textbf{0.745} & \textbf{0.741} & 0.747 & 0.733 & 0.728 & 0.720 & \textbf{0.812} & 0.775 & \textbf{0.754} & \textbf{0.762} & \textbf{0.741} & 0.693 \\
+OLS & 0.741 & 0.738 & \textbf{0.749} & \textbf{0.735} & \textbf{0.732} & \textbf{0.724} & 0.801 & \textbf{0.781} & 0.744 & 0.760 & 0.739 & \textbf{0.694} \\
+ & (0.56) & (0.50) & (0.38) & (0.56) & (0.50) & (0.38) & (0.77) & (0.43) & (0.47) & (0.77) & (0.43) & (0.47) \\
+HS & 0.722 & 0.720 & 0.679 & 0.726 & 0.703 & 0.621 & 0.802 & 0.774 & 0.698 & 0.757 & 0.714 & 0.634 \\
+ & (0.90) & (0.89) & (0.97) & (0.72) & (0.82) & (1.00) & (0.76) & (0.63) & (0.89) & (0.80) & (0.71) & (0.93) \\
+CFE & 0.738 & 0.738 & 0.662 & 0.711 & 0.676 & 0.572 & 0.804 & 0.779 & 0.691 & 0.749 & 0.713 & 0.605 \\
+ & (0.60) & (0.60) & (1.00) & (0.85) & (0.98) & (1.00) & (0.71) & (0.38) & (0.91) & (0.95) & (0.86) & (0.99) \\
+Copula & 0.710 & 0.675 & 0.638 & 0.660 & 0.620 & 0.569 & 0.790 & 0.741 & 0.436 & 0.716 & 0.643 & 0.337 \\
+ & (0.98) & (1.00) & (1.00) & (1.00) & (1.00) & (1.00) & (0.91) & (0.98) & (1.00) & (1.00) & (1.00) & (1.00) \\
+Semivariance & 0.733 & 0.739 & 0.741 & 0.726 & 0.722 & 0.716 & 0.802 & 0.780 & 0.725 & 0.758 & 0.737 & 0.693 \\
+ & (0.75) & (0.59) & (0.61) & (0.75) & (0.59) & (0.61) & (0.78) & (0.51) & (0.61) & (0.78) & (0.51) & (0.61) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\caption{Bitcoin: hedging effectiveness and p-values, full sample, same-contract setting (411 weeks)}
+\centering
+\fontsize{7.5}{9.4}\selectfont\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{\dimexpr 0.1508\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}@{}}
+\toprule
+ & \textbf{VaR 10\%} & \textbf{VaR 5\%} & \textbf{VaR 1\%} & \textbf{CVaR 10\%} & \textbf{CVaR 5\%} & \textbf{CVaR 1\%} & \textbf{VaR 90\%} & \textbf{VaR 95\%} & \textbf{VaR 99\%} & \textbf{CVaR 90\%} & \textbf{CVaR 95\%} & \textbf{CVaR 99\%} \\
+\midrule
+Naïve & 0.595 & 0.605 & \textbf{0.658} & \textbf{0.648} & \textbf{0.658} & \textbf{0.730} & 0.672 & \textbf{0.721} & 0.601 & 0.687 & 0.687 & 0.632 \\
+OLS & 0.593 & \textbf{0.607} & 0.655 & 0.645 & 0.654 & 0.714 & 0.651 & 0.705 & 0.669 & 0.685 & 0.689 & 0.654 \\
+ & (0.52) & (0.49) & (0.48) & (0.52) & (0.49) & (0.48) & (0.63) & (0.71) & (0.35) & (0.63) & (0.71) & (0.35) \\
+HS & \textbf{0.599} & 0.590 & 0.554 & 0.627 & 0.613 & 0.630 & \textbf{0.673} & 0.690 & 0.680 & 0.682 & 0.690 & 0.655 \\
+ & (0.50) & (0.69) & (0.89) & (0.64) & (0.82) & (0.91) & (0.62) & (0.90) & (0.24) & (0.75) & (0.90) & (0.44) \\
+CFE & 0.581 & 0.595 & 0.560 & 0.604 & 0.592 & 0.651 & 0.642 & 0.694 & 0.682 & 0.677 & 0.681 & 0.622 \\
+ & (0.59) & (0.70) & (0.93) & (0.76) & (0.75) & (0.96) & (0.70) & (0.81) & (0.24) & (0.78) & (0.90) & (0.49) \\
+Copula & 0.527 & 0.556 & 0.568 & 0.516 & 0.487 & 0.432 & 0.647 & 0.664 & 0.390 & 0.620 & 0.552 & 0.345 \\
+ & (0.88) & (0.94) & (0.95) & (0.97) & (0.96) & (0.96) & (0.76) & (0.99) & (1.00) & (0.90) & (1.00) & (1.00) \\
+Semivariance & 0.561 & 0.591 & 0.624 & 0.623 & 0.639 & 0.700 & 0.658 & 0.701 & \textbf{0.686} & \textbf{0.687} & \textbf{0.699} & \textbf{0.686} \\
+ & (0.72) & (0.68) & (0.64) & (0.72) & (0.68) & (0.64) & (0.69) & (0.79) & (0.19) & (0.69) & (0.79) & (0.19) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\caption{Natural gas: hedging effectiveness and p-values, full sample, same-contract setting (1,397 weeks)}
+\centering
+\fontsize{7.5}{9.4}\selectfont\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{\dimexpr 0.1508\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr 0.0708\linewidth-2\tabcolsep\relax}@{}}
+\toprule
+ & \textbf{VaR 10\%} & \textbf{VaR 5\%} & \textbf{VaR 1\%} & \textbf{CVaR 10\%} & \textbf{CVaR 5\%} & \textbf{CVaR 1\%} & \textbf{VaR 90\%} & \textbf{VaR 95\%} & \textbf{VaR 99\%} & \textbf{CVaR 90\%} & \textbf{CVaR 95\%} & \textbf{CVaR 99\%} \\
+\midrule
+Naïve & 0.439 & \textbf{0.364} & 0.218 & \textbf{0.290} & \textbf{0.235} & 0.154 & 0.306 & \textbf{0.361} & \textbf{0.250} & \textbf{0.237} & \textbf{0.204} & \textbf{0.112} \\
+OLS & 0.395 & 0.293 & 0.159 & 0.223 & 0.161 & 0.102 & 0.277 & 0.273 & 0.210 & 0.181 & 0.148 & 0.079 \\
+ & (0.81) & (0.88) & (0.77) & (0.81) & (0.88) & (0.77) & (0.70) & (0.93) & (0.63) & (0.70) & (0.93) & (0.63) \\
+HS & 0.419 & 0.320 & \textbf{0.244} & 0.272 & 0.200 & 0.084 & 0.270 & 0.313 & 0.129 & 0.204 & 0.133 & 0.064 \\
+ & (0.76) & (0.81) & (0.50) & (0.71) & (0.86) & (0.86) & (0.74) & (0.84) & (0.68) & (0.64) & (0.99) & (0.70) \\
+CFE & \textbf{0.454} & 0.315 & 0.145 & 0.229 & 0.147 & 0.098 & \textbf{0.326} & 0.316 & 0.187 & 0.148 & 0.094 & 0.043 \\
+ & (0.41) & (0.77) & (0.79) & (0.88) & (0.95) & (0.82) & (0.36) & (0.86) & (0.71) & (0.92) & (1.00) & (0.73) \\
+Copula & 0.436 & 0.322 & 0.155 & 0.262 & 0.205 & 0.097 & 0.290 & 0.285 & 0.065 & 0.196 & 0.121 & 0.057 \\
+ & (0.61) & (0.85) & (0.74) & (0.65) & (0.84) & (0.78) & (0.64) & (0.90) & (0.78) & (0.64) & (0.95) & (0.77) \\
+Semivariance & 0.422 & 0.343 & 0.225 & 0.255 & 0.197 & \textbf{0.160} & 0.261 & 0.268 & 0.204 & 0.176 & 0.145 & 0.085 \\
+ & (0.71) & (0.75) & (0.59) & (0.71) & (0.75) & (0.59) & (0.75) & (0.95) & (0.65) & (0.75) & (0.95) & (0.65) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section*{Appendix B. Data, Code and Reproducibility}
+
+{\small All data, code and results are in the project repository (github.com/HT05-S/Naive-Hedging-Tail-Risk). The raw Bloomberg and FRED files are stored unchanged, with their checksums verified by an automated test. Five scripts reproduce every number in this report from those files: the two weekly datasets (audit/stage1b\_remediation.py and scripts/build\_paper\_dataset.py), the hedge ratios (scripts/run\_hedges.py), the result tables (scripts/make\_tables.py) and the figures and this document (scripts/make\_figures.py and scripts/make\_report.py). The copula simulation uses a fixed random seed. The data audit, the log of methodology decisions and the note on the paper's data conventions are in the audit folder.\par}
+
+{\small Implementation choices not specified in the paper: quantiles use linear interpolation between order statistics; CVaR is the mean of the observations at or beyond the quantile; semivariance uses a target return of zero; the Clayton parameter is estimated by maximum likelihood on ranks; and the same 10,000 uniform draws are used in every window so that changes in the copula hedge ratio reflect changes in the data. Hedge ratios are restricted to the range 0 to 2. The Cornish–Fisher ratio sits at one of these limits in fewer than 0.2\% of weeks in five markets and in 12\% of weeks in natural gas.\par}
+
+\end{document}

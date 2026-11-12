@@ -1,6 +1,9 @@
-"""Write the final report as a Word document.
+"""Write the final report, as a Word document or as a PDF typeset with LaTeX.
 
-    python scripts/make_report.py
+    python scripts/make_report.py            # Word:  report/<name>.docx
+    python scripts/make_report.py --latex    # LaTeX: report/<name>.tex and report/<name>.pdf (needs latexmk)
+
+Both versions are produced from the same text and the same numbers below.
 
 Every number in the tables, and every number in the text that depends on our results, is read from
 results/tables/ (written by scripts/make_tables.py). Figures come from results/figures/.
@@ -8,6 +11,8 @@ results/tables/ (written by scripts/make_tables.py). Figures come from results/f
 from __future__ import annotations
 
 import re
+import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -30,6 +35,7 @@ from hedging.models import MODELS  # noqa: E402
 from hedging.report_tables import (COL_LABELS, COLS, H1, H2, PAPER_NAIVE, PAPER_NAIVE_WINS, PAPER_NAIVE_WINS_IS,  # noqa: E402
                                    PAPER_OLS_VAR_HE, Results, fmt, label)
 
+LATEX = "--latex" in sys.argv
 OUT = ROOT / "report" / "FRE6123_Final_Report_Tomar_Dhanasekaran_Kishore.docx"
 FIG = data.RESULTS / "figures"
 FONT = "Times New Roman"
@@ -176,6 +182,136 @@ def page_number_footer():
     set_font(run, 9)
 
 
+def title_block(title, subtitle, authors, lines):
+    para(title, 17, WD_ALIGN_PARAGRAPH.CENTER, after=2).runs[0].bold = True
+    para(subtitle, 13, WD_ALIGN_PARAGRAPH.CENTER, after=10)
+    para(authors, 11.5, WD_ALIGN_PARAGRAPH.CENTER, after=2)
+    for i, line in enumerate(lines):
+        para(line, 10.5, WD_ALIGN_PARAGRAPH.CENTER, after=12 if i == len(lines) - 1 else 2)
+
+
+def reference(text):
+    p = para(text, 10, WD_ALIGN_PARAGRAPH.LEFT, after=3)
+    p.paragraph_format.left_indent, p.paragraph_format.first_line_indent = Inches(0.3), Inches(-0.3)
+
+
+def page_break():
+    doc.add_page_break()
+
+
+def finish():
+    page_number_footer()
+    OUT.parent.mkdir(exist_ok=True)
+    doc.save(OUT)
+    print("report ->", OUT)
+
+
+# ------------------------------------------------------------------ LaTeX versions of the same helpers
+
+TEX: list[str] = []
+ESCAPES = {"\\": r"\textbackslash{}", "&": r"\&", "%": r"\%", "$": r"\$", "#": r"\#", "_": r"\_", "{": r"\{",
+           "}": r"\}", "~": r"\textasciitilde{}", "^": r"\textasciicircum{}"}
+PREAMBLE = r"""\documentclass[11pt,letterpaper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{newtxtext,newtxmath}
+\usepackage[margin=1in]{geometry}
+\usepackage{microtype,parskip,graphicx,booktabs,array,float,caption,titlesec,textcomp}
+\usepackage[hidelinks]{hyperref}
+\DeclareUnicodeCharacter{2212}{\textminus}
+\captionsetup{font=small,labelfont=bf,labelsep=period,justification=raggedright,singlelinecheck=false,skip=4pt}
+\titleformat*{\section}{\large\bfseries}
+\titleformat*{\subsection}{\normalsize\bfseries\itshape}
+\titlespacing*{\section}{0pt}{14pt}{4pt}
+\titlespacing*{\subsection}{0pt}{10pt}{2pt}
+\hypersetup{pdftitle={Is the Naive Hedge Still Hard to Beat?},pdfauthor={Hina Tomar, Kavin Dhanasekaran, Sai Kishore}}
+\raggedbottom
+\emergencystretch=1em
+\begin{document}
+"""
+
+
+def tex(text: str) -> str:
+    """Escape LaTeX characters and turn **bold** and *italic* spans into commands."""
+    out = []
+    for part in re.split(r"(\*\*.+?\*\*|\*.+?\*)", str(text)):
+        if part.startswith("**") and len(part) > 4:
+            out.append(r"\textbf{" + tex(part[2:-2]) + "}")
+        elif part.startswith("*") and len(part) > 2:
+            out.append(r"\textit{" + "".join(ESCAPES.get(c, c) for c in part[1:-1]) + "}")
+        else:
+            out.append("".join(ESCAPES.get(c, c) for c in part))
+    return "".join(out)
+
+
+if LATEX:
+    def para(text, size=11, align=None, after=6, before=0, indent=None, keep=False):          # noqa: F811
+        body = tex(text)
+        if size <= 10:
+            body = r"{\small " + body + r"\par}"
+        TEX.append(r"\begin{quote}" + "\n" + body + "\n" + r"\end{quote}" if indent else body)
+        TEX.append("")
+
+    def heading(text, level=1):                                                               # noqa: F811
+        TEX.append((r"\section*{" if level == 1 else r"\subsection*{") + tex(text) + "}\n")
+
+    def table(title, header, rows, widths, size=9, note=None, bold=None, group_rows=()):      # noqa: F811
+        N_TABLE[0] += 1
+        bold, n, total = bold or set(), len(header), sum(widths)
+        spec = "@{}" + "".join(
+            (r">{\raggedright\arraybackslash}" if j == 0 else r">{\centering\arraybackslash}")
+            + rf"p{{\dimexpr {w / total:.4f}\linewidth-2\tabcolsep\relax}}" for j, w in enumerate(widths)) + "@{}"
+        lines = [r"\begin{table}[H]", rf"\caption{{{tex(title)}}}", r"\centering",
+                 rf"\fontsize{{{size}}}{{{size * 1.25:.1f}}}\selectfont\setlength{{\tabcolsep}}{{3pt}}",
+                 rf"\begin{{tabular}}{{{spec}}}", r"\toprule",
+                 " & ".join(rf"\textbf{{{tex(h)}}}" if h else "" for h in header) + r" \\", r"\midrule"]
+        for i, row in enumerate(rows):
+            if i in group_rows:
+                lines.append((r"\addlinespace[3pt]" if i else "")
+                             + rf"\multicolumn{{{n}}}{{@{{}}l}}{{\textbf{{\textit{{{tex(row[0])}}}}}}} \\")
+            else:
+                cells = [re.sub(r"(?<![\w.])-(?=\d)", "−", str(c)) for c in row]          # true minus signs
+                lines.append(" & ".join(rf"\textbf{{{tex(c)}}}" if (i, j) in bold else tex(c)
+                                        for j, c in enumerate(cells)) + r" \\")
+        lines += [r"\bottomrule", r"\end{tabular}"]
+        if note:
+            lines.append(r"\par\vspace{3pt}\begin{minipage}{\linewidth}\footnotesize\raggedright \textit{Note.} "
+                         + tex(note) + r"\end{minipage}")
+        TEX.append("\n".join(lines + [r"\end{table}", ""]))
+
+    def figure(name, caption, width=6.3):                                                     # noqa: F811
+        N_FIG[0] += 1
+        TEX.append("\n".join([r"\begin{figure}[H]", r"\centering",
+                              rf"\includegraphics[width={min(width, 6.5)}in]{{../results/figures/{name}}}",
+                              rf"\caption{{{tex(caption)}}}", r"\end{figure}", ""]))
+
+    def title_block(title, subtitle, authors, lines):                                         # noqa: F811
+        TEX.append("\n".join([r"\begin{center}", rf"{{\LARGE\bfseries {tex(title)}\par}}\vspace{{4pt}}",
+                              rf"{{\large {tex(subtitle)}\par}}\vspace{{10pt}}", rf"{{{tex(authors)}\par}}\vspace{{2pt}}"]
+                             + [rf"{{\small {tex(x)}\par}}" for x in lines] + [r"\end{center}", ""]))
+
+    def reference(text):                                                                      # noqa: F811
+        TEX.append(r"{\small\setlength{\parskip}{2pt}\hangindent=0.3in\hangafter=1\noindent " + tex(text) + r"\par}" + "\n")
+
+    def page_break():                                                                         # noqa: F811
+        TEX.append(r"\clearpage" + "\n")
+
+    def finish():                                                                             # noqa: F811
+        out = OUT.with_suffix(".tex")
+        out.write_text(PREAMBLE + "\n".join(TEX) + "\n\\end{document}\n", encoding="utf-8")
+        print("report ->", out)
+        if shutil.which("latexmk") is None:
+            print("latexmk not found: compile the .tex file with pdflatex to get the PDF")
+            return
+        run = subprocess.run(["latexmk", "-pdf", "-interaction=nonstopmode", "-halt-on-error", "-outdir=build", out.name],
+                             cwd=out.parent, capture_output=True, text=True)
+        if run.returncode != 0:
+            print(run.stdout[-3000:])
+            raise SystemExit("LaTeX failed; see report/build/*.log")
+        shutil.copy(out.parent / "build" / out.with_suffix(".pdf").name, out.with_suffix(".pdf"))
+        print("report ->", out.with_suffix(".pdf"))
+
+
 # ------------------------------------------------------------------ numbers used in the text
 
 A = {m: R.scorecard_row("paper", m, "original") for m in H1}          # replication
@@ -246,14 +382,12 @@ uri = weekly[(weekly.market == "NATGAS") & (weekly.target_wed.isin(pd.to_datetim
 
 # ------------------------------------------------------------------ title and abstract
 
-p = para("Is the Naïve Hedge Still Hard to Beat?", 17, WD_ALIGN_PARAGRAPH.CENTER, after=2)
-p.runs[0].bold = True
-para("Tail-Risk Hedging with Futures, 1990–2026, with Evidence from Bitcoin and Natural Gas", 13,
-     WD_ALIGN_PARAGRAPH.CENTER, after=10)
-para("Hina Tomar, Kavin Dhanasekaran and Sai Kishore", 11.5, WD_ALIGN_PARAGRAPH.CENTER, after=2)
-para("FRE 6123 Financial Risk Management, Fall 2026 · Group Project: Final Report", 10.5, WD_ALIGN_PARAGRAPH.CENTER, after=2)
-para("Department of Finance and Risk Engineering, NYU Tandon School of Engineering", 10.5, WD_ALIGN_PARAGRAPH.CENTER, after=2)
-para("November 13, 2026", 10.5, WD_ALIGN_PARAGRAPH.CENTER, after=12)
+title_block("Is the Naïve Hedge Still Hard to Beat?",
+            "Tail-Risk Hedging with Futures, 1990–2026, with Evidence from Bitcoin and Natural Gas",
+            "Hina Tomar, Kavin Dhanasekaran and Sai Kishore",
+            ["FRE 6123 Financial Risk Management, Fall 2026 · Group Project: Final Report",
+             "Department of Finance and Risk Engineering, NYU Tandon School of Engineering",
+             "November 13, 2026"])
 
 heading("Abstract")
 para(
@@ -862,12 +996,11 @@ REFS = [
     "Wilcox, R. R., Erceg-Hurn, D. M., Clark, F., & Carlson, M. (2014). Comparing two independent groups via the lower and upper quantiles. *Journal of Statistical Computation and Simulation, 84*(7), 1543–1551.",
 ]
 for r in REFS:
-    p = para(r, 10, WD_ALIGN_PARAGRAPH.LEFT, after=3)
-    p.paragraph_format.left_indent, p.paragraph_format.first_line_indent = Inches(0.3), Inches(-0.3)
+    reference(r)
 
 # ------------------------------------------------------------------ appendices
 
-doc.add_page_break()
+page_break()
 heading("Appendix A. Full Out-of-Sample Results")
 para("Each table reports tail-risk hedging effectiveness for the 12 scenarios, with the p-value of the Wilcox et al. "
      "(2014) test against the naïve hedge in parentheses. The best model in each column is in bold. Columns 1–6 are "
@@ -904,7 +1037,4 @@ para(
     f"range 0 to 2. The Cornish–Fisher ratio sits at one of these limits in fewer than {max(at_limit(st, m) for st, m, _ in MAIN if m != 'NATGAS') * 100:.1f}% "
     f"of weeks in five markets and in {at_limit('ours', 'NATGAS') * 100:.0f}% of weeks in natural gas.", 10)
 
-page_number_footer()
-OUT.parent.mkdir(exist_ok=True)
-doc.save(OUT)
-print("report ->", OUT)
+finish()
