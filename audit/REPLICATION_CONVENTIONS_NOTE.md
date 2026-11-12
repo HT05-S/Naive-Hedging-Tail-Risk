@@ -1,6 +1,6 @@
 # Note: Replication Conventions (Roll Rule, Return Method, Weekly Calendar)
 
-**Date:** 2026-11-12 · **Authors:** Hina Tomar, Kavin Dhanasekaran, Sai Kishore (with Claude) · **Status:** agreed in the team working session of 2026-11-12; not yet coded.
+**Date:** 2026-11-12 · **Authors:** Hina Tomar, Kavin Dhanasekaran, Sai Kishore (with Claude) · **Status:** agreed in the team working session of 2026-11-12. Coded the same day: the paper setting is `src/frm_data/paper.py` (run `python scripts/build_paper_dataset.py`), which also writes the Table 2 comparison to `results/tables/table2_replication.csv`.
 
 This note records how Cao & Conlon (2025) appear to have built their weekly returns, and proposes two switches so we can first match the paper and then test our own, more accurate, conventions. It relates to items C1, C2, D3, D5, E1 and E2 in `METHODOLOGY_DECISION_LOG.md`.
 

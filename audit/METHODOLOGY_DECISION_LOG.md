@@ -59,8 +59,19 @@ Raw values are kept on disk. Each exclusion is listed in `data/processed/process
 
 | ID | Issue | Status |
 |---|---|---|
-| E1 | The paper's futures return construction is not stated. Its Table 2 WTI futures moments match a spliced front-month series, not a matched-contract series. | UNRESOLVED (strong inference only) |
-| E2 | The paper's 1,728 observations cannot be reproduced from its stated rules. 1,747 − 19 = 1,728 is an arithmetic coincidence with our 19 WTI no-observation weeks, not evidence. | UNRESOLVED |
+| E1 | The paper's futures return construction is not stated. Its Table 2 moments match a spliced series under its stated roll rule (WTI: `CL1`; GBP/USD: roll on the 1st of the contract month). The replication therefore uses spliced returns (`src/frm_data/paper.py`); same-contract returns (D3) remain the setting for Bitcoin, natural gas and the robustness runs. See `REPLICATION_CONVENTIONS_NOTE.md`. | RESOLVED 2026-11-12 (inference from Table 2; team session) |
+| E2 | The paper's 1,728 observations are reproduced: of the 1,748 Wednesdays from 1990-01-03 to 2023-06-28, 1,728 are days on which all four futures markets and the GBP/USD, S&P 500 and gold spot markets traded (`paper_calendar`, tested in `tests/test_paper_convention.py`). This gives 1,727 weekly returns; the paper may be counting dates. | RESOLVED 2026-11-12 |
 | E3 | FRED WTI is 15–30% below CL1 on several days in late March 2020 (official EIA values). One sampled week (2020-03-25) is affected. | UNRESOLVED cause; kept |
 | E4 | FRED WTI is 1–6% above CL1 since 2024. | UNRESOLVED cause; kept |
 | E5 | Why Bloomberg `NGUSHHUB` changes date convention and precision (2-decimal vs 4-decimal eras). | UNRESOLVED |
+
+## F. Additions of 2026-11-12
+
+| ID | Decision | Status |
+|---|---|---|
+| F1 | Two data settings are kept side by side. **Paper setting** (`data/processed/weekly_paper_convention.csv`): strict Wednesdays, spliced futures, the paper's roll rule; used for the replication and extension of the four original markets (H1). **Our setting** (`weekly_market_returns.csv`): Wednesday-else-Tuesday-else-Monday and same-contract returns; used for Bitcoin and natural gas (H2) and as the robustness run for H1. | AGREED (team session) |
+| F2 | In the paper setting, WTI spot (FRED) is missing on some Wednesdays. On those weeks spot and futures are both read on the nearest earlier day (Tuesday, then Monday); if neither has a price the week is dropped for WTI. 127 of 1,708 WTI weeks to June 2023 use an earlier day. | DONE |
+| F3 | Natural gas spot (A3): keep the composite as the main series. Independent tests on the raw files (Monday counts, level match against FRED, daily-change correlation with NG1) confirm that Bloomberg `NGUSHHUB` is dated one trading day late from January 2020 to mid-March 2021 (B3). Robustness: FRED only (evaluation from April 2008). A second check, Bloomberg throughout with that window shifted back one day, is not yet built. | PROPOSED by Sai; needs approval by Hina and Kavin |
+| F4 | Semivariance uses a target return of zero. Against the paper's Table 6, targets of zero, the mean and the median differ by at most 0.01 in hedging effectiveness. | DONE |
+| F5 | Risk-minimising hedge ratios are found by grid search over 0.00 to 2.00 in steps of 0.01. Quantiles use linear interpolation; CVaR is the mean of the observations at or beyond the quantile. The Clayton parameter is fitted by maximum likelihood on rank-based pseudo-observations, with the same 10,000 uniform draws reused in every window. | DONE |
+
