@@ -30,13 +30,21 @@ python -m pytest -q tests
 
 All tests should pass. They check the weekly dataset against the raw files and confirm the raw files are unchanged.
 
-## Rebuild the weekly dataset
+## Reproduce the results
+
+Run these in order from the repo root. Each step reads the output of the one before.
 
 ```bash
-python audit/stage1b_remediation.py
+python audit/stage1b_remediation.py     # weekly dataset, our setting (same-contract returns)
+python scripts/build_paper_dataset.py   # weekly dataset, paper setting (spliced returns), and Table 2 check
+python scripts/run_hedges.py            # rolling 52-week hedge ratios for the six models (about 3 minutes)
+python scripts/make_tables.py           # hedging effectiveness, tests and all result tables (about 3 minutes)
+python scripts/make_figures.py          # figures for the report
 ```
 
-This reads `data/raw/` and rewrites `data/processed/weekly_market_returns.csv`.
+The two data settings are explained in `audit/REPLICATION_CONVENTIONS_NOTE.md`. The paper setting is used to
+replicate and extend the four original markets (H1). Our setting is used for Bitcoin and natural gas (H2) and
+as a robustness run for H1.
 
 ## Repo layout
 
@@ -45,13 +53,15 @@ This reads `data/raw/` and rewrites `data/processed/weekly_market_returns.csv`.
 | `data/raw/` | Bloomberg and FRED files as downloaded | Never edit |
 | `data/external/` | Public re-downloads used to verify the raw data | Never edit |
 | `data/processed/` | Weekly spot and futures returns for the six markets | Built by code only |
-| `src/frm_data/` | Data code: contracts, rolls, weekly returns | |
+| `src/frm_data/` | Data code: contracts, rolls, weekly returns in both settings | |
+| `src/hedging/` | The six hedge-ratio models, evaluation measures and result tables | |
+| `scripts/` | The steps that reproduce every result | |
+| `results/` | Hedge ratios, tables and figures | Built by code only |
 | `audit/` | Data audit reports, decision log and conventions note | |
 | `tests/` | Automated checks | |
 | `docs/` | The paper, course guidelines, proposals and project context | |
 
-Planned, added as the work reaches them: `src/` packages for the six hedge models and for evaluation,
-`results/` for the tables and figures in the report, and `report/` for the written report.
+The written report is in `report/`.
 
 ## How we work
 
