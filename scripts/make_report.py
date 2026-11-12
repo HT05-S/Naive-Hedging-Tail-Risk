@@ -698,20 +698,26 @@ pick = [("COVID crash, Feb-Apr 2020", "WTI"), ("COVID crash, Feb-Apr 2020", "SP5
         ("Yen carry unwind, Aug 2024", "BTC"), ("Tariff sell-off, Apr 2025", "WTI"), ("Tariff sell-off, Apr 2025", "SP500"),
         ("Tariff sell-off, Apr 2025", "NATGAS")]
 est = [k for k in MODELS if k != "naive"]
+
+
+def pct(logret):
+    """Log return as a simple percentage with a true minus sign."""
+    v = round((np.exp(logret) - 1) * 100, 1)
+    return f"{'−' if v < 0 else ''}{abs(v):.1f}%"
+
+
 rows = []
 for e, m in pick:
     r = S.loc[(e, m)]
     best = max(est, key=lambda k: r[f"{k}_worst_week"])
-    rows.append([e.replace("-", "–"), L[m], str(int(r["weeks"])), f"{(np.exp(r['unhedged_worst_week']) - 1) * 100:.1f}%",
-                 f"{(np.exp(r['naive_worst_week']) - 1) * 100:.1f}%",
-                 f"{(np.exp(r[f'{best}_worst_week']) - 1) * 100:.1f}% ({label(best)})",
-                 f"{(np.exp(min(r[f'{k}_worst_week'] for k in est)) - 1) * 100:.1f}%"])
+    rows.append([e.replace("-", "–"), L[m], str(int(r["weeks"])), pct(r["unhedged_worst_week"]), pct(r["naive_worst_week"]),
+                 f"{pct(r[f'{best}_worst_week'])} ({label(best)})", pct(min(r[f"{k}_worst_week"] for k in est))])
 n_ahead = sum(np.exp(max(S.loc[k][f"{e}_worst_week"] for e in est)) - np.exp(S.loc[k]["naive_worst_week"]) > 0.02 for k in pick)
-table("Worst weekly loss of a long spot position in stress episodes: unhedged and hedged",
+table("Worst weekly return of a long spot position in stress episodes: unhedged and hedged",
       ["Episode", "Market", "Weeks", "Unhedged", "Naïve hedge", "Best estimated model", "Worst estimated model"], rows,
       [1.75, 0.85, 0.5, 0.75, 0.8, 1.2, 0.9], size=8.5,
-      note="Out-of-sample hedge ratios that minimize 5% CVaR. Losses are simple weekly returns. The best estimated model "
-           "is known only after the fact.")
+      note="Out-of-sample hedge ratios that minimize 5% CVaR. Simple weekly returns; a negative value is a loss. The "
+           "best estimated model is known only after the fact.")
 para(
     "Table 9 looks at the weeks that matter most. In the market-wide episodes the naïve hedge removes nearly all of the "
     "loss in the S&P 500 and most of it in WTI and Bitcoin. The best estimated model, which can be identified only "
@@ -732,7 +738,7 @@ for st, m, sm in MAIN:
     d_ = (u.loc["naive"] - u).drop("naive")
     rows.append([L[m]] + [f"{d_.loc[k].mean():.4f}" for k in est] + [f"{d_.min().min():.4f}"])
 table("Opportunity cost of the naïve hedge: utility of the naïve hedge minus utility of each estimated model",
-      ["Market", "OLS", "HS", "CFE", "Copula", "Semivariance", "Smallest of 60"], rows, [1.3] + [0.87] * 6,
+      ["Market", "OLS", "HS", "CFE", "Copula", "Semivariance", "Smallest of 60"], rows, [1.2, 0.8, 0.8, 0.8, 0.8, 1.05, 1.05],
       note="Mean–variance utility of weekly hedged returns with risk aversion 6, less transaction costs of 0.03% of "
            "total turnover in the hedge ratio, as in the paper's equation 16. Average over the 12 scenarios. A positive "
            "value means the naïve hedge gives higher utility.")
