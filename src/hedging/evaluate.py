@@ -41,18 +41,23 @@ def hd_weights(n: int, q: float) -> np.ndarray:
 
 
 def wilcox_pvalue(y_model: np.ndarray, y_naive: np.ndarray, side: str, alpha: float,
-                  n_boot: int = 2000, seed: int = 0) -> float:
+                  n_boot: int = 2000, seed: int = 0, paired: bool = False) -> float:
     """One-sided percentile-bootstrap p-value that the model has LOWER tail risk than the naive hedge.
 
-    Tail risk is the Harrell-Davis alpha-quantile of the side-adjusted hedged return. The two samples
-    are resampled independently (Wilcox et al. 2014). A small p-value means the model beats the naive
-    hedge; values above 0.5 mean the naive hedge had the smaller tail risk.
+    Tail risk is the Harrell-Davis alpha-quantile of the side-adjusted hedged return. A small p-value
+    means the model beats the naive hedge; values above 0.5 mean the naive hedge had the smaller tail risk.
+
+    paired=False resamples the two series independently, as in Wilcox et al. (2014) and the paper.
+    paired=True resamples whole weeks, keeping each week's two hedged returns together. The two series
+    come from the same weeks and are highly correlated, so this version is the more powerful one.
     """
     xm, xn = side_adjust(np.asarray(y_model, float), side), side_adjust(np.asarray(y_naive, float), side)
     rng = np.random.default_rng(seed)
     wm, wn = hd_weights(len(xm), alpha), hd_weights(len(xn), alpha)
-    qm = np.sort(xm[rng.integers(0, len(xm), (n_boot, len(xm)))], axis=1) @ wm
-    qn = np.sort(xn[rng.integers(0, len(xn), (n_boot, len(xn)))], axis=1) @ wn
+    im = rng.integers(0, len(xm), (n_boot, len(xm)))
+    i_n = im if paired else rng.integers(0, len(xn), (n_boot, len(xn)))
+    qm = np.sort(xm[im], axis=1) @ wm
+    qn = np.sort(xn[i_n], axis=1) @ wn
     d = qm - qn                                   # > 0: model's lower quantile is higher, i.e. less tail risk
     return float(np.mean(d < 0) + 0.5 * np.mean(d == 0))
 

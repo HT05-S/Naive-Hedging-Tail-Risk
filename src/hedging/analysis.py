@@ -96,12 +96,14 @@ def evaluate_market(setting: str, market: str, n_boot: int = 2000) -> pd.DataFra
                                he_sv=ev.effectiveness(y, sm, side, "SV", a),
                                he_var=ev.variance_effectiveness(y, sm),
                                b_mean=b.mean(), b_sd=b.std(ddof=1),
-                               utility=ev.utility(y, b), p_wilcox=np.nan)
+                               utility=ev.utility(y, b), p_wilcox=np.nan, p_paired=np.nan)
                     if mode == "oos" and subset in ("all", "fred_only") and model != "naive":
                         ck = (model, side, a) if model in ("ols", "sv") else (model, side, meas, a)
                         if ck not in cache:
-                            cache[ck] = ev.wilcox_pvalue(y, Y[("naive", side, meas, a)][m], side, a, n_boot)
-                        rec["p_wilcox"] = cache[ck]
+                            yn = Y[("naive", side, meas, a)][m]
+                            cache[ck] = (ev.wilcox_pvalue(y, yn, side, a, n_boot),
+                                         ev.wilcox_pvalue(y, yn, side, a, n_boot, paired=True))
+                        rec["p_wilcox"], rec["p_paired"] = cache[ck]
                     rows.append(rec)
     return pd.DataFrame(rows)
 
@@ -138,4 +140,26 @@ def stress_table(setting_for: dict[str, str]) -> pd.DataFrame:
                 rec[f"{model}_worst_week"] = y.min()
                 rec[f"{model}_he"] = 1 - (y ** 2).sum() / (s ** 2).sum()
             rows.append(rec)
+    return pd.DataFrame(rows)
+
+
+def ai_stress_table(setting: str = "paper", start: str = "2023-07-05", share: float = 0.10) -> pd.DataFrame:
+    """S&P 500 hedges in 'AI-stress' weeks: the worst `share` of weekly returns of the semiconductor ETF SOXX."""
+    d, B = aligned(setting, "SP500", "oos")
+    keep = (d["target_wed"] >= start).to_numpy()
+    d, B = d[keep], B[keep]
+    px = pd.read_csv(data.RAW / "bloomberg" / "SOXX_US_Equity.csv", parse_dates=["date"]).set_index("date")
+    px = px["TOT_RETURN_INDEX_GROSS_DVDS"]          # total-return index, so the 2024 share split is not a fake loss
+    soxx = np.log(px.reindex(d.index)).diff()
+    flag = (soxx <= soxx.quantile(share)).to_numpy()
+    s, f = d["s"].to_numpy(), d["f"].to_numpy()
+    rows = []
+    for label, m in (("AI-stress weeks", flag), ("Other weeks", ~flag & soxx.notna().to_numpy())):
+        rec = dict(weeks=label, n=int(m.sum()), soxx_mean=float(soxx[m].mean()), spx_mean=float(s[m].mean()),
+                   spx_worst=float(s[m].min()))
+        for model in MODELS:
+            y = s[m] - B[(model, "down", "CVaR", 0.05)].to_numpy()[m] * f[m]
+            rec[f"{model}_he"] = 1 - (y ** 2).sum() / (s[m] ** 2).sum()
+            rec[f"{model}_worst"] = float(y.min())
+        rows.append(rec)
     return pd.DataFrame(rows)

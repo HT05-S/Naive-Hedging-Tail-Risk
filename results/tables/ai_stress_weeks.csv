@@ -1,0 +1,3 @@
+weeks,n,soxx_mean,spx_mean,spx_worst,naive_he,naive_worst,ols_he,ols_worst,hs_he,hs_worst,cfe_he,cfe_worst,copula_he,copula_worst,sv_he,sv_worst
+AI-stress weeks,18,-0.0946,-0.0216,-0.0602,0.9986,-0.0001,0.9987,-0.0000,0.9991,-0.0002,0.9991,-0.0001,0.9978,-0.0032,0.9991,-0.0002
+Other weeks,156,0.0174,0.0060,-0.0425,0.9974,-0.0005,0.9973,-0.0005,0.9969,-0.0003,0.9970,-0.0003,0.9925,-0.0016,0.9969,-0.0003

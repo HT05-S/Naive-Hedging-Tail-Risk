@@ -96,6 +96,13 @@ class TestEvaluation(unittest.TestCase):
         self.assertGreater(ev.wilcox_pvalue(naive * 2.0, naive, "down", 0.05, 500), 0.95)
         self.assertLess(ev.wilcox_pvalue(naive * 0.5, naive, "up", 0.05, 500), 0.05)
 
+    def test_paired_test_detects_a_small_consistent_improvement(self):
+        rng = np.random.default_rng(4)
+        naive = rng.normal(0, 0.02, 800)
+        model = naive * 0.97                                  # 3% less risk in every week
+        self.assertGreater(ev.wilcox_pvalue(model, naive, "down", 0.05, 500), 0.2)        # independent: no power
+        self.assertLess(ev.wilcox_pvalue(model, naive, "down", 0.05, 500, paired=True), 0.05)
+
     def test_utility_charges_turnover(self):
         y = np.random.default_rng(0).normal(0, 0.01, 100)
         still, moving = np.ones(100), np.tile([1.0, 1.1], 50)

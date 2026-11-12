@@ -34,4 +34,5 @@ if __name__ == "__main__":
     pd.concat([analysis.hedge_ratio_stats(st, m, None if m in ("BTC", "NATGAS") else data.ORIGINAL_END)
                for st, m in jobs], ignore_index=True).to_csv(OUT / "hedge_ratio_stats.csv", index=False, float_format="%.4f")
     analysis.stress_table(MAIN_SETTING).to_csv(OUT / "stress_events.csv", index=False, float_format="%.4f")
+    analysis.ai_stress_table("ours").to_csv(OUT / "ai_stress_weeks.csv", index=False, float_format="%.4f")
     print("rows:", len(he), "->", OUT)
