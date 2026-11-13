@@ -13,3 +13,6 @@ Thumbs.db
 
 # LaTeX build files
 report/build/
+
+# Office lock files
+~$*

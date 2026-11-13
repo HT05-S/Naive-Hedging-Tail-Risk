@@ -87,35 +87,9 @@ def fig_in_vs_out(he: pd.DataFrame):
     plt.close(fig)
 
 
-def fig_effectiveness(he: pd.DataFrame):
-    """5% CVaR downside hedging effectiveness of the six models in each market."""
-    fig, axes = plt.subplots(2, 3, figsize=(6.5, 4.3), sharex=True)
-    for ax, (st, mk, sm) in zip(axes.ravel(), MAIN):
-        x = he[(he.setting == st) & (he.market == mk) & (he["sample"] == sm) & (he["mode"] == "oos") & (he.subset == "all")
-               & (he.side == "down") & (he.measure == "CVaR") & (he.alpha == 0.05)].set_index("model")["he"].reindex(MODELS)
-        y = range(len(MODELS))[::-1]
-        ax.barh(list(y), x.to_numpy(), height=0.62, color=[BLUE if m == "naive" else GREY for m in MODELS])
-        for yy, v in zip(y, x.to_numpy()):
-            ax.text(v + 0.02, yy, f"{v:.2f}", va="center", fontsize=8, color=INK)
-        ax.set_yticks(list(y), [MODEL_LABELS[m] for m in MODELS], color=INK)
-        ax.set_title(data.LABELS[mk])
-        ax.set_xlim(0, 1.12)
-        ax.set_xticks([0, 0.5, 1.0])
-        ax.grid(axis="y", visible=False)
-        ax.tick_params(axis="y", length=0)
-    for ax in axes[:, 1:].ravel():
-        ax.set_yticklabels([])
-    for ax in axes[-1]:
-        ax.set_xlabel("Reduction in 5% CVaR")
-    fig.tight_layout()
-    fig.savefig(OUT / "fig3_cvar_effectiveness.png", bbox_inches="tight")
-    plt.close(fig)
-
-
 if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
     he = pd.read_csv(data.RESULTS / "tables" / "effectiveness_long.csv")
     fig_hedge_ratios()
     fig_in_vs_out(he)
-    fig_effectiveness(he)
     print("figures ->", OUT)

@@ -1,14 +1,26 @@
-# Naive Hedging and Tail Risk
+# Is the Naïve Hedge Still Hard to Beat?
 
-FRE 6123 Financial Risk Management group project (NYU Tandon, Fall 2026).
+Tail-risk hedging with futures, 1990–2026, with evidence from Bitcoin and natural gas.
+
+FRE 6123 Financial Risk Management, NYU Tandon, Fall 2026. Group project: final submission.
 Team: Hina Tomar, Kavin Dhanasekaran, Sai Kishore.
 
 We replicate Cao & Conlon (2025), "Tail Risk Hedging: The Superiority of the Naïve Hedging Strategy"
-(*Journal of Futures Markets*), and extend it.
+(*Journal of Futures Markets*, 45(8), 977–1005), and extend it.
 
-- **H1:** for WTI, GBP/USD, the S&P 500 and gold, no estimated hedge-ratio model consistently beats
-  the 1:1 naïve hedge in reducing tail risk, in the paper's sample (1990 to June 2023) or through 2026.
+- **H1:** for WTI, GBP/USD, the S&P 500 and gold, no estimated hedge-ratio model significantly and consistently
+  beats the 1:1 naïve hedge in reducing tail risk, in the paper's sample (1990 to June 2023) or through 2026.
 - **H2:** the same holds for Bitcoin and natural gas.
+
+## What is in this submission
+
+| Item | Where |
+|---|---|
+| **Written report** | `FRE6123_Final_Report_Tomar_Dhanasekaran_Kishore.pdf` (LaTeX source in `report/`) |
+| **Data** | `data/raw/` (Bloomberg and FRED files as downloaded), `data/external/` (public files used to verify them), `data/processed/` (weekly returns built by the code) |
+| **Code** | `src/` (data and hedging code), `scripts/` (the steps that produce every result), `audit/` (data audit and the first data step), `tests/` |
+| **Results** | `results/hedge_ratios/`, `results/tables/`, `results/figures/` |
+| **Worked example in Excel** | `results/WTI_12_scenarios_worked.xlsx`: how the 12 scenario numbers for WTI are calculated, step by step |
 
 ## Setup
 
@@ -28,65 +40,43 @@ A conda or mamba environment with the same packages works too.
 python -m pytest -q tests
 ```
 
-All tests should pass. They check the weekly dataset against the raw files and confirm the raw files are unchanged.
+All 52 tests should pass. They check the weekly datasets against the raw files, confirm the raw files are
+unchanged, and test the six models and the evaluation measures.
 
 ## Reproduce the results
 
-Run these in order from the repo root. Each step reads the output of the one before.
+Run these in order from the top folder. Each step reads the output of the one before.
 
 ```bash
-python audit/stage1b_remediation.py     # weekly dataset, our setting (same-contract returns)
-python scripts/build_paper_dataset.py   # weekly dataset, paper setting (spliced returns), and Table 2 check
+python audit/stage1b_remediation.py     # weekly dataset, same-contract setting
+python scripts/build_paper_dataset.py   # weekly dataset, paper setting (spliced returns), and the Table 2 check
 python scripts/run_hedges.py            # rolling 52-week hedge ratios for the six models (about 3 minutes)
 python scripts/make_tables.py           # hedging effectiveness, tests and all result tables (about 3 minutes)
-python scripts/make_figures.py          # figures for the report
-python scripts/make_report.py           # the written report (Word), at the top level
-python scripts/make_report.py --latex   # the same report as a PDF typeset with LaTeX
+python scripts/make_figures.py          # the two figures in the report
+python scripts/make_report.py --latex   # the report as a PDF (needs LaTeX with latexmk)
 ```
 
-The two data settings are explained in `audit/REPLICATION_CONVENTIONS_NOTE.md`. The paper setting is used to
-replicate and extend the four original markets (H1). Our setting is used for Bitcoin and natural gas (H2) and
-as a robustness run for H1.
+The paper setting (strict Wednesdays, spliced futures returns) is used to replicate the four original markets.
+The same-contract setting is used for the extension to 2026, for Bitcoin and natural gas, and as a robustness
+check. `audit/REPLICATION_CONVENTIONS_NOTE.md` explains both.
 
-## Repo layout
+## Folders
 
-| Folder | Contents | Rule |
-|---|---|---|
-| `data/raw/` | Bloomberg and FRED files as downloaded | Never edit |
-| `data/external/` | Public re-downloads used to verify the raw data | Never edit |
-| `data/processed/` | Weekly spot and futures returns for the six markets | Built by code only |
-| `src/frm_data/` | Data code: contracts, rolls, weekly returns in both settings | |
-| `src/hedging/` | The six hedge-ratio models, evaluation measures and result tables | |
-| `scripts/` | The steps that reproduce every result | |
-| `results/` | Hedge ratios, tables and figures | Built by code only |
-| `audit/` | Data audit reports, decision log and conventions note | |
-| `tests/` | Automated checks | |
-| `docs/` | The paper, course guidelines, proposals and project context | |
-
-The written report is at the top level of the repository: `FRE6123_Final_Report_Tomar_Dhanasekaran_Kishore.pdf`
-(and the same report as `.docx`). Its LaTeX source is in `report/`.
-
-## How we work
-
-1. Pull `main`, then create a branch for your task (`git switch -c your-task`).
-2. Commit small changes and run the tests before you push.
-3. Open a pull request. A teammate reviews it before it is merged. Nobody pushes to `main` directly.
-4. Record every methodology choice in `audit/METHODOLOGY_DECISION_LOG.md`.
-
-## Who owns what
-
-| Member | Area |
+| Folder | Contents |
 |---|---|
-| Hina Tomar | Data and rolled futures series; naïve, OLS and historical-simulation hedges; extension to 2026 |
-| Kavin Dhanasekaran | Cornish–Fisher, Clayton copula and semivariance hedges; hedge-ratio stability; in-sample versus out-of-sample |
-| Sai Kishore | Evaluation (effectiveness, Wilcox test, utility); basis-risk and CFNAI regimes; Bitcoin and natural gas |
+| `data/raw/` | Bloomberg and FRED files as downloaded. Never edited; a test checks their checksums. |
+| `data/external/` | Public re-downloads used to verify the raw data |
+| `data/processed/` | Weekly spot and futures returns for the six markets, in both settings |
+| `src/frm_data/` | Data code: contracts, rolls and weekly returns |
+| `src/hedging/` | The six hedge-ratio models, the evaluation measures and the report tables |
+| `scripts/` | The steps listed above |
+| `results/` | Hedge ratios, result tables, figures and the Excel worked example |
+| `audit/` | Raw-data audit, data remediation report, methodology decision log and conventions note |
+| `tests/` | Automated checks |
+| `report/` | LaTeX source of the report |
 
-## Key documents
+## Supporting documents
 
-- [The paper](docs/paper/Cao_Conlon_2025_Tail_Risk_Hedging_JFM.pdf)
-- [Revised proposal](docs/proposal/FRE6123_Revised_Proposal_Tomar_Dhanasekaran_Kishore.docx)
-- [Course guidelines and rubric](docs/course/Group_Project_Description_and_Rubric.docx)
-- [Project context](docs/FRE6123_Project_Context.md): background for teammates and their AI assistants
 - [Methodology decision log](audit/METHODOLOGY_DECISION_LOG.md)
-- [Replication conventions note](audit/REPLICATION_CONVENTIONS_NOTE.md): how the paper built its returns, and our two switches
+- [Replication conventions note](audit/REPLICATION_CONVENTIONS_NOTE.md): how the paper built its returns, and our two settings
 - [Raw data audit](audit/RAW_DATA_AUDIT.md) and [data remediation report](audit/DATA_REMEDIATION_REPORT.md)
