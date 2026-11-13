@@ -163,3 +163,58 @@ def ai_stress_table(setting: str = "paper", start: str = "2023-07-05", share: fl
             rec[f"{model}_worst"] = float(y.min())
         rows.append(rec)
     return pd.DataFrame(rows)
+
+
+def bias_noise_table(jobs) -> pd.DataFrame:
+    """The two sides of the bias-variance comparison for each (setting, market, sample_end).
+
+    beta and r2 are the variance-minimizing ratio and the share of spot variance explained by futures over the whole
+    sample. bias is (1 - beta)^2, the squared distance of the naive ratio from beta. noise_<model> is the variance over
+    time of that model's ratio (5% CVaR, downside; for OLS the ratio is the same in every scenario). bias and noise are
+    multiplied by 100.
+    """
+    rows = []
+    for setting, market, sample_end in jobs:
+        d0 = data.load(setting)[market]
+        if sample_end is not None:
+            d0 = d0[d0["target_wed"] <= sample_end]
+        s, f = d0["s"].to_numpy(), d0["f"].to_numpy()
+        beta = np.cov(s, f)[0, 1] / np.var(f, ddof=1)
+        d, B = aligned(setting, market, "oos")
+        B = B[(d["target_wed"] <= sample_end).to_numpy()] if sample_end is not None else B
+        rec = dict(setting=setting, market=market, beta=beta, r2=np.corrcoef(s, f)[0, 1] ** 2, bias=100 * (1 - beta) ** 2)
+        for model in ("ols", "hs", "cfe"):
+            rec[f"noise_{model}"] = 100 * B[(model, "down", "CVaR", 0.05)].var()
+        rows.append(rec)
+    return pd.DataFrame(rows)
+
+
+URI_WEEKS = ("2021-02-17", "2021-02-24")       # the two weekly returns that contain the Winter Storm Uri spike and its reversal
+
+
+def natgas_without_uri(n_boot: int = 2000) -> pd.DataFrame:
+    """Natural gas, full sample, with and without the two Winter Storm Uri weeks: wins, effectiveness and tests."""
+    d, B = aligned("ours", "NATGAS", "oos")
+    uri = d["target_wed"].isin(pd.to_datetime(list(URI_WEEKS))).to_numpy()
+    rows = []
+    for label, keep in (("full sample", np.ones(len(d), dtype=bool)), ("excluding Uri weeks", ~uri)):
+        s, f = d["s"].to_numpy()[keep], d["f"].to_numpy()[keep]
+        he = pd.DataFrame({sc: {m: ev.effectiveness(s - B[(m,) + sc].to_numpy()[keep] * f, s, *sc) for m in MODELS}
+                           for sc in SCENARIOS})
+        p, q, cache = [], [], {}
+        for model in MODELS:
+            if model == "naive":
+                continue
+            for side, meas, a in SCENARIOS:
+                ck = (model, side, a) if model in ("ols", "sv") else (model, side, meas, a)
+                if ck not in cache:
+                    y = s - B[(model, side, meas, a)].to_numpy()[keep] * f
+                    cache[ck] = (ev.wilcox_pvalue(y, s - f, side, a, n_boot), ev.wilcox_pvalue(y, s - f, side, a, n_boot, paired=True))
+                p.append(cache[ck][0]), q.append(cache[ck][1])
+        p, q = np.array(p), np.array(q)
+        rows.append(dict(sample=label, weeks=int(keep.sum()), naive_wins=int((he.idxmax() == "naive").sum()),
+                         ols_below_naive=int((he.loc["ols"] < he.loc["naive"]).sum()), he_naive_min=he.loc["naive"].min(),
+                         he_naive_max=he.loc["naive"].max(), he_var_naive=ev.variance_effectiveness(s - f, s),
+                         p_below_10=int((p < 0.10).sum()), paired_below_05=int((q < 0.05).sum()),
+                         paired_above_95=int((q > 0.95).sum())))
+    return pd.DataFrame(rows)

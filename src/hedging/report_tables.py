@@ -29,6 +29,9 @@ PAPER_OLS = {
 PAPER_NAIVE_WINS = {"WTI": 9, "GBPUSD": 7, "SP500": 4, "GOLD": 6}          # of 12, out-of-sample
 PAPER_NAIVE_WINS_IS = {"WTI": 1, "GBPUSD": 3, "SP500": 3, "GOLD": 3}       # of 12, in-sample
 PAPER_OLS_VAR_HE = {"WTI": 0.930, "GBPUSD": 0.900, "SP500": 0.986, "GOLD": 0.916}
+# Cao & Conlon (2025), Table 6, 52-week window: downside semivariance effectiveness of the naive, OLS and semivariance hedges
+PAPER_SEMI = {"WTI": {"naive": 0.935, "ols": 0.932, "sv": 0.931}, "GBPUSD": {"naive": 0.916, "ols": 0.913, "sv": 0.911},
+              "SP500": {"naive": 0.985, "ols": 0.986, "sv": 0.985}, "GOLD": {"naive": 0.909, "ols": 0.917, "sv": 0.915}}
 
 
 class Results:

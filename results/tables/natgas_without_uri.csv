@@ -1,0 +1,3 @@
+sample,weeks,naive_wins,ols_below_naive,he_naive_min,he_naive_max,he_var_naive,p_below_10,paired_below_05,paired_above_95
+full sample,1397,8,12,0.112061,0.439074,0.318019,0,0,40
+excluding Uri weeks,1395,8,12,0.135048,0.440413,0.434432,0,0,41

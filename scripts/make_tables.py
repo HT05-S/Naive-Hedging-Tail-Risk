@@ -35,4 +35,7 @@ if __name__ == "__main__":
                for st, m in jobs], ignore_index=True).to_csv(OUT / "hedge_ratio_stats.csv", index=False, float_format="%.4f")
     analysis.stress_table(MAIN_SETTING).to_csv(OUT / "stress_events.csv", index=False, float_format="%.4f")
     analysis.ai_stress_table("ours").to_csv(OUT / "ai_stress_weeks.csv", index=False, float_format="%.4f")
+    analysis.bias_noise_table([(MAIN_SETTING[m], m, None if m in ("BTC", "NATGAS") else data.ORIGINAL_END)
+                               for m in MAIN_SETTING]).to_csv(OUT / "bias_noise.csv", index=False, float_format="%.6f")
+    analysis.natgas_without_uri().to_csv(OUT / "natgas_without_uri.csv", index=False, float_format="%.6f")
     print("rows:", len(he), "->", OUT)
