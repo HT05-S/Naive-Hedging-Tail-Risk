@@ -475,7 +475,7 @@ For a risk manager the lesson is that a hedge-ratio model is only as good as its
 
 \section*{Group Member Contributions}
 
-Each member was responsible for a distinct part of the analysis and for the corresponding parts of this report and of the presentation, as set out in our revised proposal. The literature review, the discussion and the conclusion were written jointly. Methodology decisions were made together and recorded in the decision log.
+Each member was responsible for a distinct part of the analysis and for the corresponding parts of this report and of the presentation, as set out in our revised proposal. The literature review, the discussion and the conclusion were written jointly. Methodology decisions were made together.
 
 \textbf{Hina Tomar.} Bloomberg and FRED data for the six markets; the rolled futures series; the naïve, OLS and historical-simulation hedges; the extension of the sample to 2026 (H1). Wrote the data and core replication parts.
 
@@ -485,7 +485,7 @@ Each member was responsible for a distinct part of the analysis and for the corr
 
 \section*{Use of AI Tools}
 
-We used Claude, an AI assistant made by Anthropic, throughout this project, through its coding tool Claude Code. It wrote and tested most of the Python code under our direction, helped audit the data, ran the analysis, and drafted and edited the text of this report. The team chose the paper, the hypotheses and the research design, made the methodology decisions recorded in the decision log (audit/METHODOLOGY\_DECISION\_LOG.md), and reviewed the code, the results and the text. We take responsibility for all content, including any errors.
+We used Claude, an AI assistant made by Anthropic, throughout this project, through its coding tool Claude Code. It wrote and tested most of the Python code under our direction, helped audit the data, ran the analysis, and drafted and edited the text of this report. The team chose the paper, the hypotheses and the research design, made the methodology decisions, and reviewed the code, the results and the text. We take responsibility for all content, including any errors.
 
 \section*{References}
 
@@ -819,7 +819,7 @@ Natural gas & 0.3180 & 0.2742 & 0.3344 & 0.2931 & 0.3115 \\
 
 \section*{Appendix B. Data, Code and Reproducibility}
 
-{\small All data, code and results are in the project repository (github.com/HT05-S/Naive-Hedging-Tail-Risk). The raw Bloomberg and FRED files are stored unchanged, with their checksums verified by an automated test. Six scripts reproduce every number in this report from those files: the two weekly datasets (audit/stage1b\_remediation.py and scripts/build\_paper\_dataset.py), the hedge ratios (scripts/run\_hedges.py), the result tables (scripts/make\_tables.py) and the figures and this document (scripts/make\_figures.py and scripts/make\_report.py). The copula simulation uses a fixed random seed. The data audit, the log of methodology decisions and the note on the paper's data conventions are in the audit folder.\par}
+{\small All data, code and results are in the project repository (github.com/HT05-S/Naive-Hedging-Tail-Risk). The raw Bloomberg and FRED files are stored unchanged, with their checksums verified by an automated test. Six scripts reproduce every number in this report from those files: the two weekly datasets (audit/stage1b\_remediation.py and scripts/build\_paper\_dataset.py), the hedge ratios (scripts/run\_hedges.py), the result tables (scripts/make\_tables.py) and the figures and this document (scripts/make\_figures.py and scripts/make\_report.py). The copula simulation uses a fixed random seed. The data audit and the note on the paper's data conventions are in the audit folder.\par}
 
 {\small Implementation choices not specified in the paper: quantiles use linear interpolation between order statistics; CVaR is the mean of the observations at or beyond the quantile; semivariance uses a target return of zero; the Clayton parameter is estimated by maximum likelihood on ranks; and the same 10,000 uniform draws are used in every window so that changes in the copula hedge ratio reflect changes in the data. Hedge ratios are restricted to the range 0 to 2. The Cornish–Fisher ratio sits at one of these limits in fewer than 0.2\% of weeks in five markets and in 12\% of weeks in natural gas.\par}
 

@@ -88,12 +88,11 @@ check. `audit/REPLICATION_CONVENTIONS_NOTE.md` explains both.
 | `src/hedging/` | The six hedge-ratio models, the evaluation measures and the report tables |
 | `scripts/` | The steps listed above |
 | `results/` | Hedge ratios, result tables, figures and the Excel worked example |
-| `audit/` | Raw-data audit, data remediation report, methodology decision log and conventions note |
+| `audit/` | Raw-data audit, data remediation report and conventions note |
 | `tests/` | Automated checks |
 | `report/` | LaTeX source of the report |
 
 ## Supporting documents
 
-- [Methodology decision log](audit/METHODOLOGY_DECISION_LOG.md)
 - [Replication conventions note](audit/REPLICATION_CONVENTIONS_NOTE.md): how the paper built its returns, and our two settings
 - [Raw data audit](audit/RAW_DATA_AUDIT.md) and [data remediation report](audit/DATA_REMEDIATION_REPORT.md)

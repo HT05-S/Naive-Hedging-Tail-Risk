@@ -1371,7 +1371,7 @@ heading("Group Member Contributions")
 para(
     "Each member was responsible for a distinct part of the analysis and for the corresponding parts of this report "
     "and of the presentation, as set out in our revised proposal. The literature review, the discussion and the "
-    "conclusion were written jointly. Methodology decisions were made together and recorded in the decision log."
+    "conclusion were written jointly. Methodology decisions were made together."
 )
 para("**Hina Tomar.** Bloomberg and FRED data for the six markets; the rolled futures series; the naïve, OLS and "
      "historical-simulation hedges; the extension of the sample to 2026 (H1). Wrote the data and core replication "
@@ -1387,7 +1387,7 @@ para(
     "We used Claude, an AI assistant made by Anthropic, throughout this project, through its coding tool Claude Code. "
     "It wrote and tested most of the Python code under our direction, helped audit the data, ran the analysis, and "
     "drafted and edited the text of this report. The team chose the paper, the hypotheses and the research design, "
-    "made the methodology decisions recorded in the decision log (audit/METHODOLOGY_DECISION_LOG.md), and reviewed "
+    "made the methodology decisions, and reviewed "
     "the code, the results and the text. We take responsibility for all content, including any errors."
 )
 
@@ -1489,8 +1489,8 @@ para(
     "reproduce every number in this report from those files: the two weekly datasets "
     "(audit/stage1b_remediation.py and scripts/build_paper_dataset.py), the hedge ratios (scripts/run_hedges.py), the "
     "result tables (scripts/make_tables.py) and the figures and this document (scripts/make_figures.py and "
-    "scripts/make_report.py). The copula simulation uses a fixed random seed. The data audit, the log of methodology "
-    "decisions and the note on the paper's data conventions are in the audit folder.", 10)
+    "scripts/make_report.py). The copula simulation uses a fixed random seed. The data audit and the note on "
+    "the paper's data conventions are in the audit folder.", 10)
 para(
     "Implementation choices not specified in the paper: quantiles use linear interpolation between order statistics; "
     "CVaR is the mean of the observations at or beyond the quantile; semivariance uses a target return of zero; the "

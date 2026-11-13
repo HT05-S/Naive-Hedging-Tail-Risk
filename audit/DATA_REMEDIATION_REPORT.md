@@ -620,7 +620,6 @@ Full samples:
   - `audit/results/stage1b_run_log.txt`
 - **Documents:**
   - `audit/DATA_REMEDIATION_REPORT.md` (this file)
-  - `audit/METHODOLOGY_DECISION_LOG.md`
 
 **Changed**
 - `requirements.txt` (at the top level): includes `xlrd`, used only for the EIA verification files. `xlrd` was installed into `audit/.venv`.
