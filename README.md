@@ -17,6 +17,7 @@ We replicate Cao & Conlon (2025), "Tail Risk Hedging: The Superiority of the Na√
 | Item | Where |
 |---|---|
 | **Written report** | `FRE6123_Final_Report_Tomar_Dhanasekaran_Kishore.pdf` (LaTeX source in `report/`) |
+| **Presentation slides** | `PRESENTATION_SLIDES.md` (link to the deck in Google Slides) |
 | **Data** | `data/raw/` (Bloomberg and FRED files as downloaded), `data/external/` (public files used to verify them), `data/processed/` (weekly returns built by the code) |
 | **Code** | `src/` (data and hedging code), `scripts/` (the steps that produce every result), `audit/` (data audit and the first data step), `tests/` |
 | **Results** | `results/hedge_ratios/`, `results/tables/`, `results/figures/` |
