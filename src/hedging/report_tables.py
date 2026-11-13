@@ -64,6 +64,7 @@ class Results:
         q = self.grid(setting, market, sample, subset=subset, val="p_paired").drop("naive").to_numpy()
         return dict(market=market, n=self.n(setting, market, sample, subset=subset), **w.to_dict(),
                     ind05=int((p < 0.05).sum()), ind10=int((p < 0.10).sum()), ind_half=float((p > 0.5).mean()),
+                    ind_half_n=int((p > 0.5).sum()),
                     pair05=int((q < 0.05).sum()), pair95=int((q > 0.95).sum()), min_p=float(p.min()))
 
 

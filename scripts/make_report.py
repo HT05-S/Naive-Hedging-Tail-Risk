@@ -1,7 +1,7 @@
 """Write the final report, as a Word document or as a PDF typeset with LaTeX.
 
-    python scripts/make_report.py            # Word:  report/<name>.docx
-    python scripts/make_report.py --latex    # LaTeX: report/<name>.tex and report/<name>.pdf (needs latexmk)
+    python scripts/make_report.py            # Word:  <name>.docx, at the top level of the repository
+    python scripts/make_report.py --latex    # PDF:   <name>.pdf at the top level; LaTeX source in report/ (needs latexmk)
 
 Both versions are produced from the same text and the same numbers below.
 
@@ -36,7 +36,8 @@ from hedging.report_tables import (COL_LABELS, COLS, H1, H2, PAPER_NAIVE, PAPER_
                                    PAPER_OLS_VAR_HE, Results, fmt, label)
 
 LATEX = "--latex" in sys.argv
-OUT = ROOT / "report" / "FRE6123_Final_Report_Tomar_Dhanasekaran_Kishore.docx"
+OUT = ROOT / "FRE6123_Final_Report_Tomar_Dhanasekaran_Kishore.docx"       # the PDF is written next to it
+TEX_DIR = ROOT / "report"                                                # LaTeX source and build files
 FIG = data.RESULTS / "figures"
 FONT = "Times New Roman"
 L = data.LABELS
@@ -201,7 +202,6 @@ def page_break():
 
 def finish():
     page_number_footer()
-    OUT.parent.mkdir(exist_ok=True)
     doc.save(OUT)
     print("report ->", OUT)
 
@@ -217,7 +217,9 @@ PREAMBLE = r"""\documentclass[11pt,letterpaper]{article}
 \usepackage{newtxtext,newtxmath}
 \usepackage[margin=1in]{geometry}
 \usepackage{microtype,parskip,graphicx,booktabs,array,float,caption,titlesec,textcomp}
+\PassOptionsToPackage{hyphens}{url}
 \usepackage[hidelinks]{hyperref}
+\urlstyle{same}
 \DeclareUnicodeCharacter{2212}{\textminus}
 \captionsetup{font=small,labelfont=bf,labelsep=period,justification=raggedright,singlelinecheck=false,skip=4pt}
 \titleformat*{\section}{\large\bfseries}
@@ -291,13 +293,16 @@ if LATEX:
                              + [rf"{{\small {tex(x)}\par}}" for x in lines] + [r"\end{center}", ""]))
 
     def reference(text):                                                                      # noqa: F811
-        TEX.append(r"{\small\setlength{\parskip}{2pt}\hangindent=0.3in\hangafter=1\noindent " + tex(text) + r"\par}" + "\n")
+        body = "".join(r"\url{" + part + "}" if part.startswith("https://") else tex(part)
+                       for part in re.split(r"(https://\S+)", text))
+        TEX.append(r"{\small\setlength{\parskip}{2pt}\hangindent=0.3in\hangafter=1\noindent " + body + r"\par}" + "\n")
 
     def page_break():                                                                         # noqa: F811
         TEX.append(r"\clearpage" + "\n")
 
     def finish():                                                                             # noqa: F811
-        out = OUT.with_suffix(".tex")
+        TEX_DIR.mkdir(exist_ok=True)
+        out = TEX_DIR / OUT.with_suffix(".tex").name
         out.write_text(PREAMBLE + "\n".join(TEX) + "\n\\end{document}\n", encoding="utf-8")
         print("report ->", out)
         if shutil.which("latexmk") is None:
@@ -308,8 +313,8 @@ if LATEX:
         if run.returncode != 0:
             print(run.stdout[-3000:])
             raise SystemExit("LaTeX failed; see report/build/*.log")
-        shutil.copy(out.parent / "build" / out.with_suffix(".pdf").name, out.with_suffix(".pdf"))
-        print("report ->", out.with_suffix(".pdf"))
+        shutil.copy(TEX_DIR / "build" / out.with_suffix(".pdf").name, OUT.with_suffix(".pdf"))
+        print("report ->", OUT.with_suffix(".pdf"))
 
 
 # ------------------------------------------------------------------ numbers used in the text
@@ -335,6 +340,28 @@ ratio = R.ratios[(R.ratios.side == "down") & (R.ratios.measure == "CVaR")]
 sd = lambda st, m, model: float(ratio[(ratio.setting == st) & (ratio.market == m) & (ratio.model == model)]["sd"].iloc[0])  # noqa: E731
 mean_b = lambda st, m, model: float(ratio[(ratio.setting == st) & (ratio.market == m) & (ratio.model == model)]["mean"].iloc[0])  # noqa: E731
 MAIN = [("paper", m, "original") for m in H1] + [("ours", m, "full") for m in H2]
+
+
+def distinct_tests(setting, market, sample):
+    """Tests of an estimated model against the naive hedge that are not repeats.
+
+    The OLS and semivariance ratios are the same for VaR and CVaR, and the test compares the same quantile of the same
+    two series, so their CVaR tests repeat their VaR tests. Returns (number of distinct tests, number of them in which
+    the paired test finds the naive hedge better at the 5% level).
+    """
+    x = R.cell(setting, market, sample)
+    x = x[(x.model != "naive") & ~(x.model.isin(["ols", "sv"]) & (x.measure == "CVaR"))]
+    return len(x), int((x.p_paired > 0.95).sum())
+
+
+def near_ties(setting, market, sample, tol=0.005):
+    """Scenarios (of 12) in which the naive hedge and the best estimated model are within tol in effectiveness."""
+    g = R.grid(setting, market, sample)
+    return int(((g.loc["naive"] - g.drop("naive").max()).abs() < tol).sum())
+
+
+DIST_A = [distinct_tests("paper", m, "original") for m in H1]
+N_DIST, N_DIST_PAIR95 = sum(a for a, _ in DIST_A), sum(b for _, b in DIST_A)
 
 
 def is_gain(st, m, sm):
@@ -398,10 +425,11 @@ para(
     "between spot and futures prices? It does. In the original sample the naïve hedge is the most effective model in "
     f"{A['WTI']['naive']}, {A['GBPUSD']['naive']}, {A['SP500']['naive']} and {A['GOLD']['naive']} of 12 tail-risk "
     "scenarios for WTI crude oil, GBP/USD, the S&P 500 and gold, and no estimated model beats it at the 10% significance "
-    f"level in any of {60 * 4} tests. The same holds from July 2023 to November 2026 and for Bitcoin and natural gas. A "
+    f"level in any of {60 * 4} tests ({N_DIST} of them distinct). The same holds from July 2023 to November 2026 and for "
+    "Bitcoin and natural gas. A "
     "paired version of the test, which has more power than the one used in the paper, strengthens the conclusion: the "
     f"naïve hedge is significantly better than the estimated model in {tot(A, 'pair95')} of the {60 * 4} original-sample "
-    "comparisons. The evidence points to estimation error as the reason. Estimated hedge ratios move widely from week to "
+    f"comparisons ({N_DIST_PAIR95} of the {N_DIST} distinct ones). The evidence points to estimation error as the reason. Estimated hedge ratios move widely from week to "
     "week, they win in-sample and lose out-of-sample, and the naïve hedge has its largest advantage in natural gas, where "
     "the spot–futures relation is least stable."
 )
@@ -409,6 +437,12 @@ para(
 # ------------------------------------------------------------------ 1 introduction
 
 heading("1. Introduction")
+para(
+    "The simplest futures hedge sells one unit of futures for each unit of the asset held. It needs no data and no "
+    "model. Decades of research have tried to improve on it, and a recent study finds that, for the large losses that "
+    "risk managers care most about, none of the improvements works reliably (Cao & Conlon, 2025). This report tests "
+    "that claim and extends it."
+)
 para(
     "A firm that holds oil, a foreign currency or an equity portfolio can remove most of its price risk by selling "
     "futures. The first decision is how many futures to sell for each unit held: the hedge ratio. The textbook answer is "
@@ -506,8 +540,8 @@ rows = [
     ["Natural gas", "Henry Hub: Bloomberg to Mar 2007, FRED DHHNGSP after", "NYMEX NG", "Jan 1999 – Nov 2026", f"{F['NATGAS']['n'] + 52:,}"],
 ]
 para(
-    "Table 1 lists the six markets. Futures prices and contract calendars are from Bloomberg; spot prices are from "
-    "Bloomberg and from the Federal Reserve Bank of St. Louis (FRED). All series are daily and were sampled weekly on "
+    "Table 1 lists the six markets. Futures prices and contract calendars are from Bloomberg (Bloomberg L.P., 2026); "
+    "spot prices are from Bloomberg and from the FRED database (Federal Reserve Bank of St. Louis, 2026). All series are daily and were sampled weekly on "
     "Wednesdays, as in the paper. Returns are log price changes. The Chicago Fed National Activity Index (CFNAI) from "
     "FRED identifies periods of below-average growth."
 )
@@ -517,7 +551,7 @@ table("Markets, sources and samples", ["Market", "Spot price", "Futures", "Sampl
            "to estimate the first hedge ratio.")
 heading("3.1 Reconstructing the paper's data conventions", 2)
 para(
-    "The paper describes its data in one paragraph: weekly Wednesday prices, 1,728 observations, and futures that are "
+    "The paper describes its data in one paragraph: weekly Wednesday prices, 1,728 weekly observations, and futures that are "
     "“nearest to maturity, with a rollover to the subsequent contract occurring on the first day of the contract month.” "
     "It does not say how holidays are handled or how returns are computed in a week when the contract changes. We "
     "inferred both from its summary statistics."
@@ -525,7 +559,8 @@ para(
 para(
     "*Calendar.* There are 1,748 Wednesdays between January 3, 1990 and June 28, 2023. On 20 of them at least one of the "
     "markets was closed. Keeping only Wednesdays on which every market traded leaves exactly 1,728 dates, the paper's "
-    "count. The paper therefore appears to drop holiday Wednesdays without replacement."
+    "count. The paper therefore appears to drop holiday Wednesdays without replacement. The paper's 1,728 are returns. "
+    "Our data begin on January 2, 1990, so the first of the 1,728 dates has no return and we have 1,727."
 )
 para(
     "*Roll weeks.* Futures returns in the paper match a spliced series: in a roll week the new contract's price is "
@@ -567,8 +602,9 @@ para(
 para(
     "For natural gas we combine two spot sources. FRED's Henry Hub series is sparse before 2007, and Bloomberg's series "
     "is dated one trading day late between January 2020 and mid-March 2021. We confirmed the second problem with three "
-    "tests on the raw files: in that window Bloomberg has no Monday prices, its prices match FRED's previous-day prices, "
-    "and its daily changes correlate with the previous day's futures change. We use Bloomberg before April 2007 and FRED "
+    "tests on the raw files: in that window Bloomberg has a price on only 1 of the 57 Mondays on which the futures "
+    "traded, it has prices on five exchange holidays, and its daily changes correlate with the previous day's futures "
+    "change (0.34) and not with the same day's (0.03). We use Bloomberg before April 2007 and FRED "
     "from then on, and every weekly return uses one source at both ends."
 )
 
@@ -642,7 +678,7 @@ def score_rows(d, markets, ref=None):
     out = []
     for m in markets:
         r = d[m]
-        out.append([L[m], f"{r['n']:,}"] + [str(r[k]) for k in MODELS] + [str(r["ind10"]), f"{r['ind_half'] * 100:.0f}%",
+        out.append([L[m], f"{r['n']:,}"] + [str(r[k]) for k in MODELS] + [str(r["ind10"]), str(r["ind_half_n"]),
                                                                          str(r["pair05"]), str(r["pair95"])])
     return out
 
@@ -661,9 +697,12 @@ table("Scorecard: scenarios won by each model and tests against the naïve hedge
       rows, [0.85, 0.52, 0.5, 0.42, 0.38, 0.42, 0.6, 0.38, 0.55, 0.5, 0.68, 0.7], size=8, group_rows=groups,
       note="Columns Naïve to SV count the scenarios (of 12) in which the model has the highest tail-risk effectiveness. "
            "The last four columns count the 60 tests of an estimated model against the naïve hedge (5 models × 12 "
-           "scenarios): the Wilcox et al. (2014) test with p below 0.10 (model better), the share with p above 0.5, and "
+           "scenarios): the Wilcox et al. (2014) test with p below 0.10 (model better) and with p above 0.5, and "
            "the paired test with p below 0.05 (model significantly better) and above 0.95 (naïve hedge significantly "
-           "better). OLS and semivariance ratios do not depend on the risk measure, so some tests repeat.")
+           "better). OLS and semivariance ratios do not depend on the risk measure, so their 12 CVaR tests repeat "
+           "their 12 VaR tests and 48 of the 60 tests in each row are distinct. Each test uses 2,000 bootstrap samples. "
+           "When we repeated all tests with different random draws, no entry in the p < 0.10 or paired p < 0.05 columns "
+           "changed, and entries in the other two columns changed by at most four.")
 others = sum(A[m][k] for m in H1 for k in ("hs", "cfe", "copula"))
 para(
     f"Panel A of Table 5 gives the main replication result. The naïve hedge is the most effective model in "
@@ -675,11 +714,21 @@ para(
     f"any scenario is {max((R.grid('paper', m, 'original').drop('naive').max() - naive[m]).max() for m in H1):.3f}."
 )
 para(
+    f"Our counts differ from the paper's for WTI and the S&P 500 although our returns for those markets match the "
+    f"paper's closely. The reason is that most scenarios are near-ties. In {sum(near_ties('paper', m, 'original') for m in H1)} "
+    f"of the 48 scenarios, and in all {near_ties('paper', 'SP500', 'original')} for the S&P 500, the naïve hedge and the "
+    "best estimated model are within 0.005 of each other in effectiveness, so a difference in the third decimal place "
+    "of one series changes which model is counted as the winner. The count of wins is therefore a fragile statistic, "
+    "in the paper as in our data, and we rest the conclusion on the tests."
+)
+para(
     f"None of the {60 * 4} tests rejects in favor of an estimated model at the 10% level, and between "
     f"{min(A[m]['ind_half'] for m in H1) * 100:.0f}% and {max(A[m]['ind_half'] for m in H1) * 100:.0f}% of the p-values "
     "in each market are above 0.5, in line with the paper's statement that the majority are. The paired test goes "
     f"further. It also finds no case in which an estimated model is better at the 5% level, and in {tot(A, 'pair95')} of "
-    f"{60 * 4} comparisons it finds the naïve hedge significantly better at the 5% level. The paper's conclusion that the "
+    f"{60 * 4} comparisons it finds the naïve hedge significantly better at the 5% level. Some of these tests are "
+    "repeats, because the OLS and semivariance ratios are the same for VaR and CVaR; counting each distinct test once "
+    f"gives {N_DIST_PAIR95} of {N_DIST}. The paper's conclusion that the "
     "alternatives are no better is, on this evidence, an understatement for most of them. H1 holds in the original "
     "sample. Appendix A gives the full tables."
 )
@@ -698,7 +747,7 @@ para(
     "With 175 weeks the 1% tail holds two observations, so we place "
     "more weight on Panel C, which adds the new weeks to the original sample: the naïve hedge wins "
     f"{F['WTI']['naive']}, {F['GBPUSD']['naive']}, {F['SP500']['naive']} and {F['GOLD']['naive']} of 12 scenarios and "
-    "is never significantly beaten. H1 holds through November 2026."
+    "is never significantly beaten (Tables 17 to 20 in Appendix A give the full results). H1 holds through November 2026."
 )
 
 heading("5.3 Bitcoin and natural gas (H2)", 2)
@@ -733,9 +782,9 @@ para(
     "and weather can move it far from the futures price, which covers delivery over the following month. In the week of "
     f"Winter Storm Uri the spot price rose from ${uri.loc['2021-02-10', 'spot_price']:.2f} to "
     f"${uri.loc['2021-02-17', 'spot_price']:.2f} per million Btu and fell back to "
-    f"${uri.loc['2021-02-24', 'spot_price']:.2f} a week later, while the front futures contract rose by about "
+    f"${uri.loc['2021-02-24', 'spot_price']:.2f} a week later, while the futures contract we hold rose by about "
     f"{(np.exp(uri.loc['2021-02-17', 'fut_logret']) - 1) * 100:.0f}% and fell by about "
-    f"{(1 - np.exp(uri.loc['2021-02-24', 'fut_logret'])) * 100:.0f}%. No hedge ratio protects against that. This is exactly the "
+    f"{(1 - np.exp(uri.loc['2021-02-24', 'fut_logret'])) * 100:.0f}% in the following week. No hedge ratio protects against that. This is exactly the "
     "setting in which the counterargument of Section 2.3 expects estimated ratios to help. They do not: the naïve hedge "
     f"is the best model in {D['NATGAS']['naive']} of 12 scenarios, the OLS hedge is less effective than the naïve hedge "
     f"in {ols_below} of 12, no test favors an estimated model, and the paired test finds the naïve hedge "
@@ -750,10 +799,10 @@ para(
     "extreme weeks enter and leave the window. Table 7 shows the same pattern in every market, and it is most pronounced "
     f"in natural gas, where even the OLS ratio has a standard deviation of {sd('ours', 'NATGAS', 'ols'):.2f}. The copula "
     f"ratio is stable but biased: it averages about {np.mean([mean_b(st, m, 'copula') for st, m, _ in MAIN]):.2f} for "
-    "downside risk in our data, as in the paper, and so under-hedges systematically."
+    "downside risk in our data, against about 0.8 in the paper, and so under-hedges systematically."
 )
 figure("fig1_hedge_ratios_wti.png", "Hedge ratios that minimize 5% CVaR (downside), WTI, 52-week rolling window, "
-                                     "1991 to June 2023. The dashed line is the naïve ratio of one.", 5.6)
+                                     "1991 to June 2023. The dashed line is the naïve ratio of one.", 5.0)
 rows = []
 for st, m, sm in MAIN:
     rows.append([L[m]] + [f"{mean_b(st, m, k):.2f} ({sd(st, m, k):.2f})" for k in MODELS if k != "naive"])
@@ -815,7 +864,8 @@ para(
     f"{ngh.loc['ols', k5] * 100:.0f}% of the 5% CVaR against {ngh.loc['naive', k5] * 100:.0f}% for the naïve hedge. Our "
     "reading is that a volatile basis has two effects. It makes the best ratio differ from one, which helps estimated "
     "models, and it makes that ratio harder to estimate from 52 weeks, which hurts them. In the two new markets the "
-    "second effect dominates."
+    "second effect appears to dominate. We do not test this reading directly; doing so would need hedge ratios "
+    "estimated on windows of different lengths."
 )
 para(
     "The split by economic growth gives a weaker pattern than the paper reports. The naïve hedge wins more scenarios in "
@@ -844,23 +894,32 @@ rows = []
 for e, m in pick:
     r = S.loc[(e, m)]
     best = max(est, key=lambda k: r[f"{k}_worst_week"])
-    rows.append([e.replace("-", "–"), L[m], str(int(r["weeks"])), pct(r["unhedged_worst_week"]), pct(r["naive_worst_week"]),
+    rows.append([e.replace("Feb-Apr", "Feb–Apr"), L[m], str(int(r["weeks"])), pct(r["unhedged_worst_week"]), pct(r["naive_worst_week"]),
                  f"{pct(r[f'{best}_worst_week'])} ({label(best)})", pct(min(r[f"{k}_worst_week"] for k in est))])
-n_ahead = sum(np.exp(max(S.loc[k][f"{e}_worst_week"] for e in est)) - np.exp(S.loc[k]["naive_worst_week"]) > 0.02 for k in pick)
+n_ahead = sum(np.exp(max(S.loc[k][f"{e}_worst_week"] for e in est)) - np.exp(S.loc[k]["naive_worst_week"]) > 0.02 for k in S.index)
+removed = lambda k: 1 - min(np.exp(S.loc[k]["naive_worst_week"]) - 1, 0) / (np.exp(S.loc[k]["unhedged_worst_week"]) - 1)  # noqa: E731
+weak_rest = {k for k in S.index if k not in pick and removed(k) < 0.5}
+assert weak_rest == {("COVID crash, Feb-Apr 2020", "NATGAS"), ("Yen carry unwind, Aug 2024", "GOLD"),
+                     ("Yen carry unwind, Aug 2024", "NATGAS"), ("Tariff sell-off, Apr 2025", "GOLD")}, weak_rest
+assert all(max(S.loc[k][f"{e}_worst_week"] for e in est) - S.loc[k]["naive_worst_week"] < 0.01 for k in weak_rest)
 table("Worst weekly return of a long spot position in stress episodes: unhedged and hedged",
       ["Episode", "Market", "Weeks", "Unhedged", "Naïve hedge", "Best estimated model", "Worst estimated model"], rows,
       [1.65, 0.8, 0.45, 0.7, 0.75, 1.35, 0.8], size=8.5,
       note="Out-of-sample hedge ratios that minimize 5% CVaR. Simple weekly returns; a negative value is a loss. The "
-           "best estimated model is known only after the fact.")
+           f"best estimated model is known only after the fact. The table shows {len(pick)} of the {len(S)} "
+           "episode–market pairs we computed; all of them are in results/tables/stress_events.csv in the repository.")
 para(
     "Table 9 looks at the weeks that matter most. In the market-wide episodes the naïve hedge removes nearly all of the "
     "loss in the S&P 500 and most of it in WTI and Bitcoin. The best estimated model, which can be identified only "
-    f"afterwards, is more than two percentage points ahead in {n_ahead} of the {len(pick)} cases. The column for the "
+    f"afterwards, is more than two percentage points ahead in {n_ahead} of the {len(S)} episode–market pairs we computed, "
+    "natural gas in April 2025. The column for the "
     "worst estimated model shows the other side of estimation. After the first weeks of the COVID crash the "
     "Cornish–Fisher ratio for WTI and the S&P 500 jumped to 2, the upper limit of our search grid, and the over-hedged "
     "position then lost heavily when prices rebounded. Two episodes show the limits of any futures hedge. In Winter Storm Uri "
     "the loss came from a spot price that the futures did not follow, and in the FTX collapse the naïve hedge removed "
-    "less than half of the worst weekly loss in Bitcoin's reference rate. These are failures of the instrument, not of "
+    "less than half of the worst weekly loss in Bitcoin's reference rate. The same is true of "
+    "four pairs not shown in the table: gold in August 2024 and April 2025, and natural gas in March 2020 "
+    "and August 2024. These are failures of the instrument, not of "
     "the hedge ratio: no estimated model did materially better."
 )
 
@@ -934,10 +993,11 @@ para(
     "hedge, not away from it. The second is that the estimated models are poor models. The in-sample results rule this "
     "out for four of the five: they find better ratios when the answer is known. The copula model is the exception. It "
     "under-hedges by construction, in-sample and out-of-sample, and its failure is one of specification. The third is "
-    "that a 52-week window is too short. We did not test longer windows, a restriction we accepted to narrow the "
-    "project; the paper reports the same conclusion with 260 weeks. A longer window would reduce noise in the estimates "
-    "but would also respond more slowly, and our stress-episode results suggest that slow-moving tail estimates are "
-    "themselves a source of loss."
+    "that a 52-week window is too short. We cannot rule this out. We did not test longer windows, a restriction we "
+    "accepted to narrow the project, and the paper, whose method section mentions a 260-week window, reports results "
+    "for 52 weeks only. A longer window would reduce noise in the estimates but would also respond more slowly to a "
+    "change in the spot–futures relation, so the direction of the effect is not obvious. It is the first extension "
+    "we would make."
 )
 para(
     "The results should be read with four limitations in mind. Our spot series for GBP/USD and gold are not the paper's, "
@@ -957,43 +1017,89 @@ para(
 
 heading("7. Conclusion")
 para(
-    "We set out to test whether the naïve hedge is still hard to beat. An independent replication from raw data "
-    "reproduces Cao and Conlon's (2025) central result for 1990 to June 2023: the naïve hedge is the most effective model "
-    "in more scenarios than any alternative, and no alternative is significantly better. The result persists through "
-    "November 2026 and extends to Bitcoin and natural gas, which supports both of our hypotheses. A more powerful paired "
-    "test shows that the naïve hedge is in most cases significantly better than the tail-specific models, not merely "
-    "indistinguishable from them."
+    "This report asked whether the naïve hedge is still hard to beat for tail risk. It is. Rebuilding Cao and Conlon's "
+    "(2025) study from raw data, we find for 1990 to June 2023 what they found: in each of the four markets the naïve "
+    "hedge is the most effective model in at least as many scenarios as any estimated model, and the paper's test never "
+    "favors an estimated model. Three more years of data and two new markets do not change this. From July 2023 to "
+    "November 2026, and in Bitcoin and natural gas, the test again never favors an estimated model. Both hypotheses are "
+    "supported. Our paired test takes the result one step further than the paper: in "
+    f"{N_DIST_PAIR95} of the {N_DIST} distinct original-sample comparisons the naïve hedge is not merely as good as the "
+    "estimated model but significantly better, most often against the historical-simulation, Cornish–Fisher and "
+    "copula models."
 )
 para(
-    "The explanation is estimation error. Hedge ratios fitted to the tail of a one-year window are unstable, they "
-    "succeed only on the data they were fitted to, and they cost more to maintain. The counterargument that an unstable "
-    "basis should favor estimated ratios holds for gold and fails where it matters most: in natural gas, the market with "
-    "the weakest spot–futures link in our study, the naïve hedge has its clearest advantage. The contribution of a "
-    "hedge-ratio model is limited by how well its inputs can be estimated, and for tail risk at a weekly horizon that "
-    "limit is reached quickly."
+    "The reason is estimation error. A hedge ratio fitted to the tail of one year of weekly data rests on a handful of "
+    "observations. It moves sharply from week to week, it works on the weeks it was fitted to and not on the weeks that "
+    "follow, and it costs more to trade. The naïve ratio has none of these problems because it is not estimated."
+)
+para(
+    "Basis risk, the main counterargument, does not rescue the estimated models. A volatile basis favors them in gold, "
+    "but in natural gas, where spot and futures prices are least closely linked, the naïve hedge has its clearest lead. "
+    f"Two cautions apply. That lead is relative: futures remove only {ng_var.loc['naive'].iloc[0] * 100:.0f}% of the "
+    "variance of natural gas spot returns, so every hedge there is weak and the naïve hedge is the best of them. And "
+    f"the Bitcoin evidence is thinner: the naïve hedge wins {D['BTC']['naive']} of 12 scenarios in a sample of "
+    f"{D['BTC']['n']} weeks."
+)
+para(
+    "The replication also produced a point of method. The paper splices futures prices across contracts, which counts "
+    "the price gap at each roll as a return. When the futures curve is steep this makes a hedge look worse than it is: "
+    f"after June 2023 it lowers the measured 5% CVaR effectiveness of the naïve hedge for the S&P 500 from "
+    f"{sp_post_ours.loc['naive', k5]:.2f} to {sp_post_paper.loc['naive', k5]:.2f} (Section 5.8). Studies of hedging "
+    "effectiveness should compute each futures return on a single contract."
+)
+para(
+    "For a risk manager the lesson is that a hedge-ratio model is only as good as its inputs. For weekly tail risk "
+    "estimated on a one-year window those inputs are too noisy to help, and the one-for-one hedge remains the sensible "
+    "default."
+)
+
+# ------------------------------------------------------------------ contributions and use of AI
+
+heading("Group Member Contributions")
+para(
+    "Each member was responsible for a distinct part of the analysis and for the corresponding parts of this report "
+    "and of the presentation, as set out in our revised proposal. The literature review, the discussion and the "
+    "conclusion were written jointly. Methodology decisions were made together and recorded in the decision log."
+)
+para("**Hina Tomar.** Bloomberg and FRED data for the six markets; the rolled futures series; the naïve, OLS and "
+     "historical-simulation hedges; the extension of the sample to 2026 (H1). Wrote the data and core replication "
+     "parts.", after=3)
+para("**Kavin Dhanasekaran.** The Cornish–Fisher, Clayton copula and semivariance hedges; hedge-ratio stability; the "
+     "in-sample versus out-of-sample comparison (estimation error). Wrote the model and estimation-error parts.", after=3)
+para("**Sai Kishore.** The evaluation framework (hedging effectiveness, the Wilcox test and utility); the basis-risk "
+     "and CFNAI analysis; Bitcoin and natural gas (H2) and the stress episodes. Wrote the evaluation and new-market "
+     "parts.")
+
+heading("Use of AI Tools")
+para(
+    "We used Claude, an AI assistant made by Anthropic, throughout this project, through its coding tool Claude Code. "
+    "It wrote and tested most of the Python code under our direction, helped audit the data, ran the analysis, and "
+    "drafted and edited the text of this report. The team chose the paper, the hypotheses and the research design, "
+    "made the methodology decisions recorded in the decision log (audit/METHODOLOGY_DECISION_LOG.md), and reviewed "
+    "the code, the results and the text. We take responsibility for all content, including any errors."
 )
 
 # ------------------------------------------------------------------ references
 
 heading("References")
 REFS = [
-    "Aquilina, M., Lombardi, M., Schrimpf, A., & Sushko, V. (2024). *The market turbulence and carry trade unwind of August 2024* (BIS Bulletin No. 90). Bank for International Settlements.",
-    "Basel Committee on Banking Supervision. (2019). *Minimum capital requirements for market risk*. Bank for International Settlements.",
+    "Aquilina, M., Lombardi, M., Schrimpf, A., & Sushko, V. (2024). *The market turbulence and carry trade unwind of August 2024* (BIS Bulletin No. 90). Bank for International Settlements. https://www.bis.org/publ/bisbull90.htm",
+    "Basel Committee on Banking Supervision. (2019). *Minimum capital requirements for market risk*. Bank for International Settlements. https://www.bis.org/bcbs/publ/d457.htm",
     "Bloomberg L.P. (2026). *Bloomberg Terminal* [Spot and futures price data]. Accessed through New York University.",
-    "Cao, M., & Conlon, T. (2025). Tail risk hedging: The superiority of the naïve hedging strategy. *Journal of Futures Markets, 45*(8), 977–1005.",
-    "Cao, Z., Harris, R. D. F., & Shen, J. (2010). Hedging and value at risk: A semi-parametric approach. *Journal of Futures Markets, 30*(8), 780–794.",
-    "Conlon, T., & Cotter, J. (2013). Downside risk and the energy hedger’s horizon. *Energy Economics, 36*, 371–379.",
-    "Cotter, J., & Hanly, J. (2006). Reevaluating hedging performance. *Journal of Futures Markets, 26*(7), 677–702.",
-    "DeMiguel, V., Garlappi, L., & Uppal, R. (2009). Optimal versus naive diversification: How inefficient is the 1/N portfolio strategy? *Review of Financial Studies, 22*(5), 1915–1953.",
-    "Ederington, L. H. (1979). The hedging performance of the new futures markets. *Journal of Finance, 34*(1), 157–170.",
-    "Federal Energy Regulatory Commission (FERC) & North American Electric Reliability Corporation (NERC). (2021). *The February 2021 cold weather outages in Texas and the South Central United States* [Staff report].",
-    "Federal Reserve Bank of St. Louis. (2026). *Federal Reserve Economic Data (FRED)*: series CFNAI, DHHNGSP and DCOILWTICO [Data sets].",
-    "Gensler, G. (2024, January 10). *Statement on the approval of spot bitcoin exchange-traded products*. U.S. Securities and Exchange Commission.",
-    "Harrell, F. E., & Davis, C. E. (1982). A new distribution-free quantile estimator. *Biometrika, 69*(3), 635–640.",
-    "Harris, R. D. F., & Shen, J. (2006). Hedging and value at risk. *Journal of Futures Markets, 26*(4), 369–390.",
-    "International Monetary Fund. (2025). *Global financial stability report: Enhancing resilience amid uncertainty* (April 2025).",
-    "Wang, Y., Wu, C., & Yang, L. (2015). Hedging with futures: Does anything beat the naïve hedging strategy? *Management Science, 61*(12), 2870–2889.",
-    "Wilcox, R. R., Erceg-Hurn, D. M., Clark, F., & Carlson, M. (2014). Comparing two independent groups via the lower and upper quantiles. *Journal of Statistical Computation and Simulation, 84*(7), 1543–1551.",
+    "Cao, M., & Conlon, T. (2025). Tail risk hedging: The superiority of the naïve hedging strategy. *Journal of Futures Markets, 45*(8), 977–1005. https://doi.org/10.1002/fut.22602",
+    "Cao, Z., Harris, R. D. F., & Shen, J. (2010). Hedging and value at risk: A semi-parametric approach. *Journal of Futures Markets, 30*(8), 780–794. https://doi.org/10.1002/fut.20440",
+    "Conlon, T., & Cotter, J. (2013). Downside risk and the energy hedger’s horizon. *Energy Economics, 36*, 371–379. https://doi.org/10.1016/j.eneco.2012.09.012",
+    "Cotter, J., & Hanly, J. (2006). Reevaluating hedging performance. *Journal of Futures Markets, 26*(7), 677–702. https://doi.org/10.1002/fut.20212",
+    "DeMiguel, V., Garlappi, L., & Uppal, R. (2009). Optimal versus naive diversification: How inefficient is the 1/N portfolio strategy? *Review of Financial Studies, 22*(5), 1915–1953. https://doi.org/10.1093/rfs/hhm075",
+    "Ederington, L. H. (1979). The hedging performance of the new futures markets. *Journal of Finance, 34*(1), 157–170. https://doi.org/10.1111/j.1540-6261.1979.tb02077.x",
+    "Federal Energy Regulatory Commission (FERC) & North American Electric Reliability Corporation (NERC). (2021). *The February 2021 cold weather outages in Texas and the South Central United States* [Staff report]. https://www.ferc.gov/media/february-2021-cold-weather-outages-texas-and-south-central-united-states-ferc-nerc-and",
+    "Federal Reserve Bank of St. Louis. (2026). *Federal Reserve Economic Data (FRED)*: series CFNAI, DHHNGSP and DCOILWTICO [Data sets]. https://fred.stlouisfed.org",
+    "Gensler, G. (2024, January 10). *Statement on the approval of spot bitcoin exchange-traded products*. U.S. Securities and Exchange Commission. https://www.sec.gov/newsroom/speeches-statements/gensler-statement-spot-bitcoin-011023",
+    "Harrell, F. E., & Davis, C. E. (1982). A new distribution-free quantile estimator. *Biometrika, 69*(3), 635–640. https://doi.org/10.1093/biomet/69.3.635",
+    "Harris, R. D. F., & Shen, J. (2006). Hedging and value at risk. *Journal of Futures Markets, 26*(4), 369–390. https://doi.org/10.1002/fut.20195",
+    "International Monetary Fund. (2025). *Global financial stability report: Enhancing resilience amid uncertainty* (April 2025). https://www.imf.org/en/Publications/GFSR/Issues/2025/04/22/global-financial-stability-report-april-2025",
+    "Wang, Y., Wu, C., & Yang, L. (2015). Hedging with futures: Does anything beat the naïve hedging strategy? *Management Science, 61*(12), 2870–2889. https://doi.org/10.1287/mnsc.2014.2028",
+    "Wilcox, R. R., Erceg-Hurn, D. M., Clark, F., & Carlson, M. (2014). Comparing two independent groups via the lower and upper quantiles. *Journal of Statistical Computation and Simulation, 84*(7), 1543–1551. https://doi.org/10.1080/00949655.2012.754026",
 ]
 for r in REFS:
     reference(r)
@@ -1004,8 +1110,12 @@ page_break()
 heading("Appendix A. Full Out-of-Sample Results")
 para("Each table reports tail-risk hedging effectiveness for the 12 scenarios, with the p-value of the Wilcox et al. "
      "(2014) test against the naïve hedge in parentheses. The best model in each column is in bold. Columns 1–6 are "
-     "downside risk and columns 7–12 upside risk.", 10)
-for st, m, sm in MAIN:
+     "downside risk and columns 7–12 upside risk. Tables 11 to 16 are the main results: the replication for the four "
+     "original markets and the full sample for Bitcoin and natural gas. Tables 17 to 20 give the four original markets "
+     "over the whole period, January 1990 to November 2026, in the same-contract setting; Panel C of Table 5 summarizes "
+     "them.", 10)
+FULL_H1 = [("ours", m, "full") for m in H1]
+for st, m, sm in MAIN + FULL_H1:
     g, pv = R.grid(st, m, sm), R.grid(st, m, sm, val="p_wilcox")
     best = g.idxmax()
     rows, bold = [], set()
@@ -1016,7 +1126,8 @@ for st, m, sm in MAIN:
         rows.append([label(model)] + [fmt(g.loc[model, c]) for c in COLS])
         if model != "naive":
             rows.append([""] + [f"({pv.loc[model, c]:.2f})" for c in COLS])
-    period = "January 1990 to June 2023, paper setting" if sm == "original" else "full sample, same-contract setting"
+    period = ("January 1990 to June 2023, paper setting" if sm == "original" else
+              "January 1990 to November 2026, same-contract setting" if m in H1 else "full sample, same-contract setting")
     table(f"{L[m]}: hedging effectiveness and p-values, {period} ({R.n(st, m, sm):,} weeks)", [""] + COL_LABELS, rows,
           [0.98] + [0.46] * 12, size=7.5, bold=bold)
 

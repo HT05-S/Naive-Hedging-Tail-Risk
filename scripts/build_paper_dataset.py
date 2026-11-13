@@ -50,5 +50,5 @@ if __name__ == "__main__":
             rows.append(dict(market=market, series=leg, statistic=name, ours=a, paper=b, n=len(g)))
     out = pd.DataFrame(rows)
     (ROOT / "results" / "tables").mkdir(parents=True, exist_ok=True)
-    out.to_csv(ROOT / "results" / "tables" / "table2_replication.csv", index=False, float_format="%.4f")
+    out.to_csv(ROOT / "results" / "tables" / "table2_replication.csv", index=False, float_format="%.6f")
     print(out.pivot_table(index=["market", "series"], columns="statistic", values="ours", sort=False)[STATS].round(3))

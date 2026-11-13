@@ -40,7 +40,7 @@ python scripts/build_paper_dataset.py   # weekly dataset, paper setting (spliced
 python scripts/run_hedges.py            # rolling 52-week hedge ratios for the six models (about 3 minutes)
 python scripts/make_tables.py           # hedging effectiveness, tests and all result tables (about 3 minutes)
 python scripts/make_figures.py          # figures for the report
-python scripts/make_report.py           # the written report (Word), in report/
+python scripts/make_report.py           # the written report (Word), at the top level
 python scripts/make_report.py --latex   # the same report as a PDF typeset with LaTeX
 ```
 
@@ -63,7 +63,8 @@ as a robustness run for H1.
 | `tests/` | Automated checks | |
 | `docs/` | The paper, course guidelines, proposals and project context | |
 
-The written report is in `report/`.
+The written report is at the top level of the repository: `FRE6123_Final_Report_Tomar_Dhanasekaran_Kishore.pdf`
+(and the same report as `.docx`). Its LaTeX source is in `report/`.
 
 ## How we work
 
