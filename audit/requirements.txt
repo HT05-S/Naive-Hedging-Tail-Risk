@@ -1,3 +1,0 @@
-# The project now has one shared environment file at the repo root.
-# This file is kept so the commands in the audit reports still work.
--r ../requirements.txt

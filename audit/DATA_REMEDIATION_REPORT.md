@@ -19,9 +19,9 @@ Labels used throughout:
 ## 1. Reproducing this stage
 
 ```
-audit/.venv/Scripts/python.exe -m pip install -r audit/requirements.txt   # adds xlrd for the EIA files
-audit/.venv/Scripts/python.exe -I audit/stage1b_remediation.py              # ~2 minutes, all outputs
-audit/.venv/Scripts/python.exe -I -m unittest discover -s tests -v          # 31 tests, ~80 s
+pip install -r requirements.txt            # includes xlrd for the EIA files
+python audit/stage1b_remediation.py        # about 2 minutes, all outputs
+python -m pytest -q tests                  # the automated checks
 ```
 
 - **Raw data untouched [VERIFIED].** All 41 files under `data/raw/` are hashed before and after the run, and the script stops if any hash changes (`audit/results/stage1b_run_log.txt`: `raw_files_unchanged_after_run=True`). A test also checks every file against the SHA-256 recorded in the Stage 1 inventory.
@@ -623,7 +623,7 @@ Full samples:
   - `audit/METHODOLOGY_DECISION_LOG.md`
 
 **Changed**
-- `audit/requirements.txt`: added `xlrd==2.0.1`, used only for the EIA verification files. `xlrd` was installed into `audit/.venv`.
+- `requirements.txt` (at the top level): includes `xlrd`, used only for the EIA verification files. `xlrd` was installed into `audit/.venv`.
 
 **Not changed:** anything under `data/raw/`, the Stage 1 report and its CSVs, the project context document and the proposal.
 

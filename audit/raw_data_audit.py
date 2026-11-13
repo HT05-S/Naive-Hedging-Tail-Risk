@@ -14,7 +14,7 @@ contracts and does NOT apply roll rules. Daily log changes are computed only as 
 screening diagnostic for anomalies.
 
 Run from the project root:
-    audit/.venv/Scripts/python.exe -I audit/raw_data_audit.py
+    python audit/raw_data_audit.py
 """
 from __future__ import annotations
 

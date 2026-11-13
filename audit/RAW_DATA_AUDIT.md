@@ -23,9 +23,8 @@ The anomaly IDs (A01 to A34) refer to rows in `audit/results/anomaly_register.cs
 ## 1. Reproducing the audit
 
 ```
-py -3.12 -m venv audit/.venv
-audit/.venv/Scripts/python.exe -m pip install -r audit/requirements.txt
-audit/.venv/Scripts/python.exe -I audit/raw_data_audit.py
+pip install -r requirements.txt
+python audit/raw_data_audit.py
 ```
 
 - **Environment used:** Python 3.12.8, pandas 3.1.1, numpy 2.5.4. The `mlfe` conda environment named in the project context does not exist on this machine, so an isolated venv was created under `audit/.venv`.

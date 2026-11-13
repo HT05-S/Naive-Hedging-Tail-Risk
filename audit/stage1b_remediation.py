@@ -1,6 +1,6 @@
 """Stage 1B: data remediation, futures-contract validation and weekly dataset construction.
 
-Run:  audit/.venv/Scripts/python.exe -I audit/stage1b_remediation.py
+Run from the project root:  python audit/stage1b_remediation.py
 
 Reads data/raw/ (never writes there; SHA-256 checked before and after) and the
 external verification downloads in data/external/verification_2026-11-11/.

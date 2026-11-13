@@ -1,7 +1,7 @@
 """Automated tests for Stage 1B (stdlib unittest; no extra dependencies).
 
 Run from the project root:
-    audit/.venv/Scripts/python.exe -I -m unittest discover -s tests -v
+    python -m pytest -q tests
 
 Most tests check the delivered file data/processed/weekly_market_returns.csv
 against the raw files using code paths that are independent of the builder.

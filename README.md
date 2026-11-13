@@ -22,6 +22,22 @@ We replicate Cao & Conlon (2025), "Tail Risk Hedging: The Superiority of the Na�
 | **Results** | `results/hedge_ratios/`, `results/tables/`, `results/figures/` |
 | **Worked example in Excel** | `results/WTI_12_scenarios_worked.xlsx`: how the 12 scenario numbers for WTI are calculated, step by step |
 
+## Data sources
+
+| Market | Spot price | Futures |
+|---|---|---|
+| WTI crude oil | FRED `DCOILWTICO` (EIA Cushing spot) | Bloomberg `CL1`–`CL3` |
+| GBP/USD | Bloomberg `GBPUSD Curncy` | Bloomberg `BP1`–`BP3` |
+| S&P 500 | Bloomberg `SPX Index` | Bloomberg `SP1`–`SP2` to September 2021, then `ES1`–`ES3` |
+| Gold | Bloomberg `XAU Curncy` | Bloomberg `GC1`–`GC3` |
+| Bitcoin | Bloomberg `BRR Index` (CME CF reference rate); `XBTUSD Curncy` as a check | Bloomberg `BTC1`–`BTC3` |
+| Natural gas | Bloomberg `NGUSHHUB Index` to March 2007, FRED `DHHNGSP` after | Bloomberg `NG1`–`NG3` |
+
+Also used: Bloomberg contract calendars (last trading days) for every futures family, FRED `CFNAI` for economic
+regimes, and Bloomberg `SOXX US Equity` for the AI-concentration check. Bloomberg data were pulled on the NYU
+terminals on November 9, 2026. `data/raw/manifest.csv` lists every series with its dates and row count, and the
+report's reference list gives the full citations.
+
 ## Setup
 
 Python 3.11 or newer.
